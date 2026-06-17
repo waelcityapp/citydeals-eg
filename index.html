@@ -1,434 +1,1560 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CityDeals EG</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CityDeals EG</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo',sans-serif}
-:root{--primary:#ff6b00;--accent:#ff3d00;--bg:#0a0a0a;--surface:#141414;--surface-light:#1e1e1e;--text:#fff;--text-secondary:#8a8a8a;--text-muted:#5a5a5a;--border:#2a2a2a}
-[data-theme="light"]{--bg:#f5f5f5;--surface:#fff;--surface-light:#f0f0f0;--text:#212121;--text-secondary:#757575;--text-muted:#999;--border:#e0e0e0}
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #0a0a0a;
+            color: #fafafa;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-body{background:var(--bg);color:var(--text);min-height:100vh;transition:background 0.3s,color 0.3s}
+        #root {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background-color: #0a0a0a;
+            position: relative;
+            padding-bottom: 80px;
+        }
 
-@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+        .page-content {
+            padding: 16px;
+            animation: fadeIn 0.3s ease-in-out;
+        }
 
-.animate-fadeInUp{animation:fadeInUp 0.6s ease-out forwards}
-.animate-fadeIn{animation:fadeIn 0.4s ease-out forwards}
-.delay-1{animation-delay:0.1s}
-.delay-2{animation-delay:0.2s}
-.delay-3{animation-delay:0.3s}
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-/* Splash Screen */
-.splash{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;transition:opacity 0.8s,transform 0.8s}
-.splash.hidden{opacity:0;transform:scale(1.1);pointer-events:none}
-.splash-logo{width:100px;height:100px;background:linear-gradient(135deg,#ff6b00,#ff3d00);border-radius:30px;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:800;color:#fff;margin-bottom:24px;box-shadow:0 10px 40px rgba(255,107,0,0.3)}
-.splash h1{font-size:32px;font-weight:800;background:linear-gradient(135deg,#fff,#ff8c42);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
-.splash p{color:var(--text-secondary);font-size:16px;margin-bottom:40px}
+        /* ==================== HOME PAGE ==================== */
+        .header {
+            margin-bottom: 16px;
+        }
 
-.province-select{width:90%;max-width:400px}
-.province-label{color:var(--text-secondary);font-size:14px;margin-bottom:16px;text-align:center;font-weight:600}
-.province-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:24px}
-.province-btn{background:var(--surface);border:2px solid var(--border);color:var(--text-secondary);padding:16px;border-radius:12px;cursor:pointer;font-size:15px;font-weight:600;transition:all 0.3s}
-.province-btn:hover,.province-btn.active{border-color:var(--primary);color:var(--primary);transform:translateY(-2px);box-shadow:0 4px 12px rgba(255,107,0,0.15)}
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
 
-.area-section{margin-top:16px;width:100%}
-.area-label{color:var(--text-secondary);font-size:14px;margin-bottom:12px;text-align:center}
-.area-chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px}
-.area-chip{padding:10px 18px;background:var(--surface);border:1px solid var(--border);border-radius:20px;font-size:14px;cursor:pointer;white-space:nowrap;transition:all 0.3s;color:var(--text-secondary)}
-.area-chip:hover,.area-chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-.continue-btn{width:100%;padding:18px;background:linear-gradient(135deg,#ff6b00,#ff3d00);color:#fff;border:none;border-radius:12px;font-size:18px;font-weight:700;cursor:pointer;transition:all 0.3s;box-shadow:0 4px 12px rgba(255,107,0,0.3)}
-.continue-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,107,0,0.4)}
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background-color: #e63c3c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
 
-/* App */
-.app{display:none;max-width:480px;margin:0 auto;min-height:100vh;background:var(--bg)}
-.app.active{display:block;animation:fadeIn 0.5s}
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+        }
 
-/* Header */
-.header{background:var(--bg);padding:16px;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
-.header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.header-logo{display:flex;align-items:center;gap:10px}
-.logo-icon{width:40px;height:40px;background:linear-gradient(135deg,#ff6b00,#ff3d00);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff}
-.logo-text{font-size:20px;font-weight:800;background:linear-gradient(135deg,#fff,#ff8c42);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.logo-location{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:4px}
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-.header-actions{display:flex;gap:10px;align-items:center}
-.icon-btn{background:var(--surface);border:1px solid var(--border);color:var(--text-secondary);width:40px;height:40px;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all 0.3s}
-.icon-btn:hover{background:var(--primary);border-color:var(--primary);color:#fff;transform:translateY(-2px)}
-.lang-badge{font-size:10px;font-weight:700;margin-left:2px}
+        .icon-btn {
+            background: none;
+            border: none;
+            color: #fafafa;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
 
-.search-container{position:relative}
-.search-bar{display:flex;gap:10px;align-items:center}
-.search-input-wrapper{flex:1;position:relative}
-.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:18px}
-.search-input{width:100%;padding:14px 14px 14px 44px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:15px;outline:none;transition:all 0.3s}
-.search-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(255,107,0,0.1)}
-.search-input::placeholder{color:var(--text-muted)}
-.filter-btn{width:48px;height:48px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text-secondary);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;transition:all 0.3s}
-.filter-btn:hover{background:var(--primary);border-color:var(--primary);color:#fff}
+        .icon-btn:hover {
+            background-color: #1e1e1e;
+        }
 
-/* Location Bar */
-.location-bar{background:var(--surface);padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);color:var(--text-secondary);font-size:14px}
-.location-bar strong{color:var(--primary)}
+        .location-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 20px;
+            padding: 6px 12px;
+            color: #fafafa;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
 
-/* Hero */
-.hero-section{padding:0 16px;margin-bottom:24px}
-.hero-card{background:var(--surface);border-radius:24px;overflow:hidden;position:relative;height:200px;display:flex;align-items:flex-end;padding:24px;border:1px solid var(--border)}
-.hero-bg{position:absolute;inset:0;background:linear-gradient(180deg,transparent 0%,rgba(10,10,10,0.9) 100%),radial-gradient(circle at 30% 50%,rgba(255,107,0,0.15) 0%,transparent 50%)}
-.hero-content{position:relative;z-index:1}
-.hero-badge{display:inline-block;background:linear-gradient(135deg,#ff6b00,#ff3d00);color:#fff;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:12px;animation:pulse 2s infinite}
-.hero-title{font-size:24px;font-weight:800;margin-bottom:8px;line-height:1.3}
-.hero-subtitle{color:var(--text-secondary);font-size:14px}
-.hero-dots{display:flex;gap:6px;margin-top:16px}
-.hero-dot{width:8px;height:8px;border-radius:50%;background:var(--text-muted);transition:all 0.3s}
-.hero-dot.active{width:24px;border-radius:4px;background:var(--primary)}
+        .location-btn:hover {
+            background-color: #2a2a2a;
+        }
 
-/* Categories */
-.categories-section{margin-bottom:24px}
-.section-header{display:flex;justify-content:space-between;align-items:center;padding:0 16px;margin-bottom:16px}
-.section-title{font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px}
-.section-icon{width:32px;height:32px;background:linear-gradient(135deg,#ff6b00,#ff3d00);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px}
-.view-all-btn{color:var(--primary);font-size:14px;font-weight:600;background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.3s}
-.view-all-btn:hover{color:#ff8c42}
+        .offers-count {
+            font-size: 13px;
+            color: #828282;
+        }
 
-.categories-scroll{display:flex;gap:12px;padding:0 16px;overflow-x:auto;scrollbar-width:none}
-.categories-scroll::-webkit-scrollbar{display:none}
-.category-btn{display:flex;align-items:center;gap:8px;padding:12px 20px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text-secondary);font-size:14px;font-weight:600;cursor:pointer;transition:all 0.3s;white-space:nowrap}
-.category-btn:hover{transform:translateY(-2px);border-color:var(--primary);color:var(--primary)}
-.category-btn.active{background:linear-gradient(135deg,#ff6b00,#ff3d00);border:none;color:#fff;box-shadow:0 4px 12px rgba(255,107,0,0.3)}
-.category-icon{font-size:20px}
+        .hero-section {
+            background: linear-gradient(135deg, #1e1e1e 0%, #0a0a0a 100%);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+        }
 
-/* Areas */
-.areas-section{padding:0 16px;margin-bottom:24px}
-.areas-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
-.areas-scroll::-webkit-scrollbar{display:none}
+        .hero-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
 
-/* Deals */
-.deals-section{margin-bottom:24px}
-.deals-tabs{display:flex;gap:16px;padding:0 16px;margin-bottom:16px}
-.deals-tab{background:none;border:none;color:var(--text-muted);font-size:16px;font-weight:600;cursor:pointer;padding:8px 0;position:relative;transition:all 0.3s}
-.deals-tab.active{color:var(--text)}
-.deals-tab.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(135deg,#ff6b00,#ff3d00);border-radius:3px}
+        .hero-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
 
-.deals-scroll{display:flex;gap:16px;padding:0 16px;overflow-x:auto;scrollbar-width:none}
-.deals-scroll::-webkit-scrollbar{display:none}
+        .hero-stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #e63c3c;
+        }
 
-.deal-card{background:var(--surface);border-radius:20px;overflow:hidden;min-width:280px;border:1px solid var(--border);transition:all 0.4s;cursor:pointer}
-.deal-card:hover{transform:translateY(-8px);box-shadow:0 8px 32px rgba(255,107,0,0.15);border-color:var(--primary)}
-.deal-image{width:100%;height:160px;display:flex;align-items:center;justify-content:center;font-size:60px;position:relative;overflow:hidden}
-.deal-image::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 0%,rgba(20,20,20,0.8) 100%)}
-.deal-badge{position:absolute;top:12px;left:12px;background:linear-gradient(135deg,#ff6b00,#ff3d00);color:#fff;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;z-index:2;box-shadow:0 4px 12px rgba(255,107,0,0.3)}
-.deal-fav{position:absolute;top:12px;right:12px;width:36px;height:36px;background:rgba(20,20,20,0.8);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--text-muted);z-index:2;transition:all 0.3s}
-.deal-fav:hover,.deal-fav.active{color:#ff3d00;border-color:#ff3d00}
-.deal-content{padding:16px;position:relative;z-index:2}
-.deal-store{color:var(--primary);font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
-.deal-title{font-size:16px;font-weight:700;margin-bottom:12px;line-height:1.4}
-.deal-meta{display:flex;justify-content:space-between;align-items:center}
-.deal-price{display:flex;gap:10px;align-items:center}
-.old-price{text-decoration:line-through;color:var(--text-muted)}
-.new-price{color:var(--primary);font-size:20px;font-weight:800}
-.deal-location{color:var(--text-muted);font-size:13px;display:flex;align-items:center;gap:4px}
-.deal-btn{width:100%;padding:14px;background:linear-gradient(135deg,#ff6b00,#ff3d00);border:none;color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.3s}
-.deal-btn:hover{background:linear-gradient(135deg,#ff8c42,#ff6b00)}
+        .hero-stat-label {
+            font-size: 11px;
+            color: #828282;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-/* Bottom Nav */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(20,20,20,0.95);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 0 20px;z-index:100;max-width:480px;margin:0 auto}
-.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 12px;cursor:pointer;color:var(--text-muted);font-size:11px;font-weight:600;transition:all 0.3s}
-.nav-item.active{color:var(--primary)}
-.nav-item.active .nav-icon{background:linear-gradient(135deg,#ff6b00,#ff3d00);box-shadow:0 4px 12px rgba(255,107,0,0.3);color:#fff;border:none}
-.nav-icon{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;transition:all 0.3s;background:var(--surface);border:1px solid var(--border)}
-.nav-item:hover .nav-icon{transform:translateY(-4px);border-color:var(--primary)}
+        .hero-divider {
+            width: 1px;
+            height: 40px;
+            background-color: #333;
+        }
 
-/* Toast */
-.toast-container{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;flex-direction:column;gap:8px;pointer-events:none}
-.toast{background:var(--surface);color:var(--text);padding:14px 24px;border-radius:12px;font-size:14px;font-weight:600;border:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,0.3);display:flex;align-items:center;gap:10px;opacity:0;transform:translateY(20px);transition:all 0.4s;backdrop-filter:blur(10px)}
-.toast.show{opacity:1;transform:translateY(0)}
-.toast-icon{width:32px;height:32px;background:linear-gradient(135deg,#ff6b00,#ff3d00);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff}
+        .hero-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
 
-.content{padding-bottom:100px}
+        .hero-subtitle {
+            font-size: 13px;
+            color: #828282;
+        }
 
-[dir="ltr"] .search-icon{left:auto;right:14px}
-[dir="ltr"] .search-input{padding:14px 44px 14px 14px}
-[dir="ltr"] .deal-badge{left:auto;right:12px}
-[dir="ltr"] .deal-fav{right:auto;left:12px}
-</style>
+        .stats-grid {
+            margin-bottom: 24px;
+        }
+
+        .section-title-small {
+            font-size: 11px;
+            color: #828282;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: linear-gradient(135deg, #141414 0%, #1e1e1e 100%);
+            border-radius: 16px;
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #828282;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .flash-deals-section {
+            margin-bottom: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .section-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .flash-icon {
+            color: #ff9800;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .deals-count {
+            font-size: 13px;
+            color: #828282;
+        }
+
+        .deals-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: none;
+        }
+
+        .deals-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .deal-card {
+            min-width: 170px;
+            background: linear-gradient(135deg, #141414 0%, #1e1e1e 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .deal-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .deal-image {
+            height: 130px;
+            background: linear-gradient(135deg, #281400 0%, #3c0014 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .deal-emoji {
+            font-size: 52px;
+        }
+
+        .flash-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #e63c3c;
+            border-radius: 6px;
+            padding: 4px 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .favorite-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fafafa;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .favorite-btn:hover {
+            background: rgba(230, 60, 60, 0.3);
+            border-color: #e63c3c;
+        }
+
+        .discount-badge {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: #e63c3c;
+            border-radius: 12px;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .deal-info {
+            padding: 14px;
+        }
+
+        .deal-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .deal-shop {
+            font-size: 12px;
+            color: #828282;
+            margin-bottom: 4px;
+        }
+
+        .deal-location {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            color: #828282;
+            margin-bottom: 10px;
+        }
+
+        .deal-price {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .price-current {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fafafa;
+        }
+
+        .price-original {
+            font-size: 12px;
+            color: #828282;
+            text-decoration: line-through;
+        }
+
+        .categories-section {
+            margin-bottom: 24px;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .category-card {
+            border-radius: 16px;
+            padding: 20px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .category-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .category-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .category-name {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .category-count {
+            font-size: 10px;
+            color: #828282;
+        }
+
+        /* ==================== PROFILE PAGE ==================== */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding: 8px 0;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #fafafa;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-btn:hover {
+            background-color: #1e1e1e;
+        }
+
+        .header-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-icon {
+            color: #e63c3c;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .header-spacer {
+            width: 36px;
+        }
+
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .profile-card {
+            background: linear-gradient(135deg, #141414 0%, #1e1e1e 100%);
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(255, 255, 255, 0.05) inset;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(255, 255, 255, 0.05) inset;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .card-icon-wrapper {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .card-title-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .card-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #fafafa;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: #828282;
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .modern-input {
+            width: 100%;
+            padding: 16px 18px;
+            background-color: #0a0a0a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            color: #fafafa;
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+
+        .modern-input::placeholder {
+            color: #828282;
+        }
+
+        .modern-input:focus {
+            border-color: #e63c3c;
+            box-shadow: 0 0 0 3px rgba(230, 60, 60, 0.15);
+        }
+
+        .modern-input:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+        }
+
+        .file-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-input-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 40px 24px;
+            background: linear-gradient(135deg, #0a0a0a 0%, #141414 100%);
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            color: #828282;
+            font-size: 14px;
+            text-align: center;
+            transition: border-color 0.2s, background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .file-input-label:hover {
+            border-color: #e63c3c;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1e1e1e 100%);
+        }
+
+        .file-input-label i {
+            color: #e63c3c;
+            font-size: 24px;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background-color: #0a0a0a;
+            border-radius: 12px;
+            font-size: 13px;
+            color: #828282;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .file-info i {
+            color: #2196f3;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #e63c3c 0%, #c62828 100%);
+            border: none;
+            border-radius: 16px;
+            color: #fafafa;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+            box-shadow: 0 4px 16px rgba(230, 60, 60, 0.3);
+        }
+
+        .action-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(230, 60, 60, 0.4);
+        }
+
+        .action-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .action-btn.loading {
+            background: linear-gradient(135deg, #828282 0%, #666 100%);
+            box-shadow: none;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .spin {
+            animation: spin 1s linear infinite;
+        }
+
+        .message {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .message.success {
+            background-color: rgba(76, 175, 80, 0.15);
+            color: #4caf50;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .message.error {
+            background-color: rgba(230, 60, 60, 0.15);
+            color: #e63c3c;
+            border: 1px solid rgba(230, 60, 60, 0.2);
+        }
+
+        .saved-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background-color: rgba(76, 175, 80, 0.1);
+            border-radius: 12px;
+            font-size: 13px;
+            color: #4caf50;
+            border: 1px solid rgba(76, 175, 80, 0.15);
+        }
+
+        /* ==================== BOTTOM NAVIGATION ==================== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            background: linear-gradient(180deg, rgba(10, 10, 10, 0.95) 0%, #0a0a0a 100%);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 0 24px;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            color: #828282;
+            cursor: pointer;
+            padding: 8px 16px;
+            transition: color 0.2s;
+            font-family: inherit;
+        }
+
+        .nav-item.active {
+            color: #e63c3c;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .nav-center {
+            position: relative;
+            top: -20px;
+        }
+
+        .nav-center-btn {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #e63c3c 0%, #c62828 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fafafa;
+            box-shadow: 0 4px 16px rgba(230, 60, 60, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .nav-center-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 24px rgba(230, 60, 60, 0.5);
+        }
+
+        /* ==================== VIDEOS LIST ==================== */
+        .videos-card {
+            margin-top: 8px;
+        }
+
+        .videos-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .video-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: linear-gradient(135deg, #0a0a0a 0%, #141414 100%);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .video-preview {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            overflow: hidden;
+            flex-shrink: 0;
+            background-color: #0a0a0a;
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.4);
+            color: #fafafa;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .video-preview:hover .video-play-overlay {
+            opacity: 1;
+        }
+
+        .video-info {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .video-date {
+            font-size: 13px;
+            color: #828282;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #e63c3c;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .delete-btn:hover {
+            background-color: rgba(230, 60, 60, 0.15);
+        }
+
+        .loading-videos {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 40px;
+            color: #828282;
+            font-size: 14px;
+        }
+
+        /* ==================== SCROLLBAR ==================== */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 480px) {
+            .page-content {
+                padding: 12px;
+            }
+
+            .hero-section {
+                padding: 20px;
+            }
+
+            .profile-card {
+                padding: 20px;
+            }
+
+            .deal-card {
+                min-width: 150px;
+            }
+
+            .categories-grid {
+                gap: 8px;
+            }
+
+            .category-card {
+                padding: 16px 6px;
+            }
+        }
+    </style>
+<base target="_blank">
 </head>
 <body>
-<!-- Splash Screen -->
-<div class="splash" id="splash">
-<div class="splash-content">
-<div class="splash-logo animate-fadeInUp">CD</div>
-<h1 class="animate-fadeInUp delay-1">CityDeals EG</h1>
-<p class="animate-fadeInUp delay-2">أفضل العروض في مدينتك</p>
+    <div id="root"></div>
 
-<div class="province-select animate-fadeInUp delay-3">
-<div class="province-label">اختر محافظتك</div>
-<div class="province-grid">
-<button class="province-btn" onclick="selectProvince(this)">القاهرة</button>
-<button class="province-btn" onclick="selectProvince(this)">الإسكندرية</button>
-<button class="province-btn" onclick="selectProvince(this)">الجيزة</button>
-<button class="province-btn" onclick="selectProvince(this)">المنصورة</button>
-<button class="province-btn" onclick="selectProvince(this)">طنطا</button>
-<button class="province-btn" onclick="selectProvince(this)">أسوان</button>
-</div>
+    <script type="text/babel">
+        const { useState, useEffect, useCallback } = React;
 
-<div class="area-section" id="areaSection" style="display:none">
-<div class="area-label">اختر منطقتك</div>
-<div class="area-chips" id="areaChips">
-<button class="area-chip" onclick="selectArea(this)">مدينة نصر</button>
-<button class="area-chip" onclick="selectArea(this)">المعادي</button>
-<button class="area-chip" onclick="selectArea(this)">الزمالك</button>
-<button class="area-chip" onclick="selectArea(this)">العباسية</button>
-<button class="area-chip" onclick="selectArea(this)">مصر الجديدة</button>
-<button class="area-chip" onclick="selectArea(this)">التحرير</button>
-</div>
-</div>
+        // ==================== SUPABASE CONFIG ====================
+        const SUPABASE_URL = 'https://polhqbqtsirdpkgtefni.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_lvq6bKez0fOQP1CYcnqyjA_xCLufW5y';
 
-<button class="continue-btn animate-fadeInUp delay-3" onclick="enterApp()">استمرار</button>
-</div>
-</div>
+        const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-<!-- App -->
-<div class="app" id="app">
-<!-- Header -->
-<div class="header">
-<div class="header-top">
-<div class="header-logo">
-<div class="logo-icon">CD</div>
-<div>
-<div class="logo-text">CityDeals</div>
-<div class="logo-location">📍 <span id="locationText">Al Giza, Egypt</span></div>
-</div>
-</div>
-<div class="header-actions">
-<button class="icon-btn" onclick="toggleTheme()" title="تبديل الوضع">🌙</button>
-<button class="icon-btn" onclick="toggleLang()" title="تغيير اللغة">🌐<<span class="lang-badge" id="langBadge">EN</span></button>
-<button class="icon-btn" onclick="showNotifications()" title="الإشعارات">🔔</button>
-</div>
-</div>
-<div class="search-container">
-<div class="search-bar">
-<div class="search-input-wrapper">
-<span class="search-icon">🔍</span>
-<input type="text" class="search-input" id="searchInput" placeholder="ابحث عن عروض..." onkeyup="searchDeals()">
-</div>
-<button class="filter-btn" onclick="showFilters()" title="تصفية">⚙️</button>
-</div>
-</div>
-</div>
+        // ==================== MOCK DATA ====================
+        const deals = [
+            {
+                id: '1',
+                title: 'Big Burger Meal',
+                shop: 'Burger Hub',
+                location: 'Dokki, Giza',
+                originalPrice: 150,
+                discountedPrice: 90,
+                discount: '-40%',
+                image: '🍔',
+                isFlash: true,
+            },
+            {
+                id: '2',
+                title: 'Pizza Night',
+                shop: 'Pizza Palace',
+                location: 'Dokki, Giza',
+                originalPrice: 120,
+                discountedPrice: 60,
+                discount: '-50%',
+                image: '🍕',
+                isFlash: true,
+            },
+            {
+                id: '3',
+                title: 'Cold Brew',
+                shop: 'The Bean',
+                location: 'Dokki, Giza',
+                originalPrice: 75,
+                discountedPrice: 75,
+                discount: '',
+                image: '☕',
+                isFlash: true,
+            },
+        ];
 
-<div class="content">
-<!-- Location -->
-<div class="location-bar">
-<span>📍</span>
-<span id="currentLocation">القاهرة - <strong>مدينة نصر</strong></span>
-</div>
+        const categories = [
+            { id: '1', name: 'Beauty', icon: '💄', dealCount: 2, color: '#e91e63' },
+            { id: '2', name: 'Cafe', icon: '☕', dealCount: 2, color: '#795548' },
+            { id: '3', name: 'Electronics', icon: '📱', dealCount: 3, color: '#2196f3' },
+            { id: '4', name: 'Fashion', icon: '👗', dealCount: 4, color: '#9c27b0' },
+        ];
 
-<!-- Hero -->
-<div class="hero-section animate-fadeInUp">
-<div class="hero-card">
-<div class="hero-bg"></div>
-<div class="hero-content">
-<div class="hero-badge">Are you looking for?</div>
-<h2 class="hero-title">Top Offers & Discounts</h2>
-<p class="hero-subtitle">Select your region, select the field.</p>
-<div class="hero-dots">
-<div class="hero-dot active"></div>
-<div class="hero-dot"></div>
-<div class="hero-dot"></div>
-</div>
-</div>
-</div>
-</div>
+        const stats = [
+            { value: '16', label: 'Total Deals', color: '#e63c3c' },
+            { value: '6', label: 'Flash Deals', color: '#ff9800' },
+            { value: '16', label: 'Shops', color: '#4caf50' },
+        ];
 
-<!-- Categories -->
-<div class="categories-section">
-<div class="section-header">
-<div class="section-title">
-<div class="section-icon">📂</div>
-<span id="catTitle">الفئات</span>
-</div>
-<button class="view-all-btn" onclick="showToast('View All')">View All →</button>
-</div>
-<div class="categories-scroll">
-<button class="category-btn active" onclick="selectCategory(this)">
-<span class="category-icon">🍴</span>
-<span>Food</span>
-</button>
-<button class="category-btn" onclick="selectCategory(this)">
-<span class="category-icon">☕</span>
-<span>Cafe</span>
-</button>
-<button class="category-btn" onclick="selectCategory(this)">
-<span class="category-icon">👕</span>
-<span>Fashion</span>
-</button>
-<button class="category-btn" onclick="selectCategory(this)">
-<span class="category-icon">💊</span>
-<span>Health</span>
-</button>
-<button class="category-btn" onclick="selectCategory(this)">
-<span class="category-icon">🎬</span>
-<span>Cinema</span>
-</button>
-<button class="category-btn" onclick="selectCategory(this)">
-<span class="category-icon">🏋️</span>
-<span>Gym</span>
-</button>
-<button class="category-btn" onclick="selectCategory(this)">
-<span class="category-icon">✈️</span>
-<span>Travel</span>
-</button>
-<button class="category-btn" onclick="selectCategory(this)">
-<span class="category-icon">🔧</span>
-<span>Services</span>
-</button>
-</div>
-</div>
+        // ==================== HOME PAGE COMPONENTS ====================
 
-<!-- Areas -->
-<div class="areas-section">
-<div class="section-header">
-<div class="section-title">
-<div class="section-icon">📍</div>
-<span id="areaTitle">المناطق</span>
-</div>
-</div>
-<div class="areas-scroll">
-<button class="area-chip active" onclick="selectArea(this)">الكل</button>
-<button class="area-chip" onclick="selectArea(this)">مدينة نصر</button>
-<button class="area-chip" onclick="selectArea(this)">المعادي</button>
-<button class="area-chip" onclick="selectArea(this)">الزمالك</button>
-<button class="area-chip" onclick="selectArea(this)">العباسية</button>
-<button class="area-chip" onclick="selectArea(this)">مصر الجديدة</button>
-<button class="area-chip" onclick="selectArea(this)">التحرير</button>
-</div>
-</div>
+        const HomeHeader = () => {
+            return (
+                <div className="header">
+                    <div className="header-top">
+                        <div className="logo">
+                            <div className="logo-icon">C</div>
+                            <span className="logo-text">City Deals</span>
+                        </div>
+                        <div className="header-actions">
+                            <button className="icon-btn">
+                                <i className="fas fa-bell"></i>
+                            </button>
+                            <button className="location-btn">
+                                <i className="fas fa-map-marker-alt"></i>
+                                <span>Dokki</span>
+                                <i className="fas fa-chevron-down" style={{fontSize: '12px'}}></i>
+                            </button>
+                        </div>
+                    </div>
+                    <p className="offers-count">16 offers available</p>
+                </div>
+            );
+        };
 
-<!-- Deals -->
-<div class="deals-section">
-<div class="deals-tabs">
-<button class="deals-tab active" onclick="selectTab(this)">
-<span id="trendingTab">Trending Offers</span>
-</button>
-<button class="deals-tab" onclick="selectTab(this)">
-<span id="flashTab">⚡ Flash Deals</span>
-</button>
-</div>
-<div class="deals-scroll">
-<div class="deal-card animate-fadeInUp" onclick="openDeal(1)">
-<div class="deal-image" style="background:linear-gradient(135deg,#1a1a2e,#16213e)">🍕
-<div class="deal-badge">خصم 50%</div>
-<button class="deal-fav" onclick="toggleFav(event,1)">♡</button>
-</div>
-<div class="deal-content">
-<div class="deal-store">🍕 Pizza Hut</div>
-<div class="deal-title">بيتزا عائلية + بيبسي 2 لتر</div>
-<div class="deal-meta">
-<div class="deal-price">
-<span class="old-price">350 ج</span>
-<span class="new-price">175 ج</span>
-</div>
-<div class="deal-location">📍 مدينة نصر</div>
-</div>
-</div>
-<button class="deal-btn" onclick="getDeal(event,1)">احصل على العرض</button>
-</div>
+        const HeroSection = () => {
+            return (
+                <div className="hero-section">
+                    <div className="hero-stats">
+                        <div className="hero-stat">
+                            <span className="hero-stat-value">16</span>
+                            <span className="hero-stat-label">Total Deals</span>
+                        </div>
+                        <div className="hero-divider" />
+                        <div className="hero-stat">
+                            <span className="hero-stat-value">6</span>
+                            <span className="hero-stat-label">Flash Deals</span>
+                        </div>
+                        <div className="hero-divider" />
+                        <div className="hero-stat">
+                            <span className="hero-stat-value">16</span>
+                            <span className="hero-stat-label">Shops</span>
+                        </div>
+                    </div>
+                    <h2 className="hero-title">Deals in Dokki, Giza</h2>
+                    <p className="hero-subtitle">16 offers available</p>
+                </div>
+            );
+        };
 
-<div class="deal-card animate-fadeInUp delay-1" onclick="openDeal(2)">
-<div class="deal-image" style="background:linear-gradient(135deg,#2d1b4e,#1a1a2e)">💇
-<div class="deal-badge">خصم 30%</div>
-<button class="deal-fav" onclick="toggleFav(event,2)">♡</button>
-</div>
-<div class="deal-content">
-<div class="deal-store">💇 Glamour Salon</div>
-<div class="deal-title">قص شعر + سشوار + مانيور</div>
-<div class="deal-meta">
-<div class="deal-price">
-<span class="old-price">500 ج</span>
-<span class="new-price">350 ج</span>
-</div>
-<div class="deal-location">📍 الزمالك</div>
-</div>
-</div>
-<button class="deal-btn" onclick="getDeal(event,2)">احصل على العرض</button>
-</div>
+        const StatsGrid = () => {
+            return (
+                <div className="stats-grid">
+                    <h3 className="section-title-small">CATEGORIES</h3>
+                    <div className="stats-row">
+                        {stats.map((stat, index) => (
+                            <div key={index} className="stat-card">
+                                <span className="stat-value" style={{ color: stat.color }}>
+                                    {stat.value}
+                                </span>
+                                <span className="stat-label">{stat.label}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
 
-<div class="deal-card animate-fadeInUp delay-2" onclick="openDeal(3)">
-<div class="deal-image" style="background:linear-gradient(135deg,#0f3460,#16213e)">🎬
-<div class="deal-badge">2+1 مجاناً</div>
-<button class="deal-fav" onclick="toggleFav(event,3)">♡</button>
-</div>
-<div class="deal-content">
-<div class="deal-store">🎬 VOX Cinemas</div>
-<div class="deal-title">تذاكر سينما - اشترِ 2 واحصل على 1</div>
-<div class="deal-meta">
-<div class="deal-price">
-<span class="new-price">200 ج</span>
-</div>
-<div class="deal-location">📍 المعادي</div>
-</div>
-</div>
-<button class="deal-btn" onclick="getDeal(event,3)">احصل على العرض</button>
-</div>
-</div>
-</div>
-</div>
+        const FlashDeals = () => {
+            return (
+                <div className="flash-deals-section">
+                    <div className="section-header">
+                        <div className="section-title-wrapper">
+                            <i className="fas fa-bolt flash-icon"></i>
+                            <h3 className="section-title">Flash Deals</h3>
+                        </div>
+                        <span className="deals-count">8 available</span>
+                    </div>
+                    <div className="deals-scroll">
+                        {deals.map((deal) => (
+                            <div key={deal.id} className="deal-card">
+                                <div className="deal-image">
+                                    <span className="deal-emoji">{deal.image}</span>
+                                    {deal.isFlash && (
+                                        <div className="flash-badge">
+                                            <i className="fas fa-bolt"></i>
+                                            <span>Flash</span>
+                                        </div>
+                                    )}
+                                    <button className="favorite-btn">
+                                        <i className="far fa-heart"></i>
+                                    </button>
+                                    {deal.discount && (
+                                        <span className="discount-badge">{deal.discount}</span>
+                                    )}
+                                </div>
+                                <div className="deal-info">
+                                    <h4 className="deal-title">{deal.title}</h4>
+                                    <p className="deal-shop">{deal.shop}</p>
+                                    <div className="deal-location">
+                                        <i className="fas fa-map-marker-alt" style={{fontSize: '12px'}}></i>
+                                        <span>{deal.location}</span>
+                                    </div>
+                                    <div className="deal-price">
+                                        <span className="price-current">EGP {deal.discountedPrice}</span>
+                                        {deal.originalPrice !== deal.discountedPrice && (
+                                            <span className="price-original">EGP {deal.originalPrice}</span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
 
-<!-- Bottom Nav -->
-<div class="bottom-nav">
-<div class="nav-item active" onclick="navigate(this,'home')">
-<div class="nav-icon">🏠</div>
-<span id="navHome">الرئيسية</span>
-</div>
-<div class="nav-item" onclick="navigate(this,'explore')">
-<div class="nav-icon">🔲</div>
-<span id="navExplore">استكشف</span>
-</div>
-<div class="nav-item" onclick="navigate(this,'search')">
-<div class="nav-icon">🔍</div>
-<span id="navSearch">بحث</span>
-</div>
-<div class="nav-item" onclick="navigate(this,'saved')">
-<div class="nav-icon">❤️</div>
-<span id="navSaved">المحفوظات</span>
-</div>
-<div class="nav-item" onclick="navigate(this,'profile')">
-<div class="nav-icon">👤</div>
-<span id="navProfile">الملف الشخصي</span>
-</div>
-</div>
-</div>
+        const CategoriesSection = () => {
+            return (
+                <div className="categories-section">
+                    <h3 className="section-title-small">CATEGORIES</h3>
+                    <div className="categories-grid">
+                        {categories.map((category) => (
+                            <div
+                                key={category.id}
+                                className="category-card"
+                                style={{ backgroundColor: category.color + '20' }}
+                            >
+                                <div
+                                    className="category-icon"
+                                    style={{ backgroundColor: category.color }}
+                                >
+                                    <span>{category.icon}</span>
+                                </div>
+                                <span className="category-name">{category.name}</span>
+                                <span className="category-count">{category.dealCount} deals</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
 
-<div class="toast-container" id="toastContainer"></div>
+        // ==================== PROFILE PAGE COMPONENTS ====================
 
-<script>
-let currentLang='ar',currentTheme='dark',points=150,selectedProvince=null,selectedArea=null;
-const translations={ar:{splashTitle:'CityDeals EG',splashSubtitle:'أفضل العروض في مدينتك',provinceLabel:'اختر محافظتك',areaLabel:'اختر منطقتك',continueBtn:'استمرار',searchPlaceholder:'ابحث عن عروض...',catTitle:'الفئات',areaTitle:'المناطق',trendingTab:'العروض الرائجة',flashTab:'⚡ عروض فلاش',navHome:'الرئيسية',navExplore:'استكشف',navSearch:'بحث',navSaved:'المحفوظات',navProfile:'الملف الشخصي',location:'القاهرة - مدينة نصر'},en:{splashTitle:'CityDeals EG',splashSubtitle:'Best deals in your city',provinceLabel:'Select your city',areaLabel:'Select your area',continueBtn:'Continue',searchPlaceholder:'Search deals...',catTitle:'Categories',areaTitle:'Areas',trendingTab:'Trending Offers',flashTab:'⚡ Flash Deals',navHome:'Home',navExplore:'Explore',navSearch:'Search',navSaved:'Saved',navProfile:'Profile',location:'Cairo - Nasr City'}};
+        const ProfileHeader = ({ onBack }) => {
+            return (
+                <div className="profile-header">
+                    <button className="back-btn" onClick={onBack}>
+                        <i className="fas fa-arrow-left"></i>
+                    </button>
+                    <div className="header-title-wrapper">
+                        <i className="fas fa-user header-icon"></i>
+                        <h1 className="header-title">Profile</h1>
+                    </div>
+                    <div className="header-spacer"></div>
+                </div>
+            );
+        };
 
-function selectProvince(btn){document.querySelectorAll('.province-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');selectedProvince=btn.textContent;document.getElementById('areaSection').style.display='block';showToast('✅ '+selectedProvince)}
-function selectArea(btn){document.querySelectorAll('.area-chip').forEach(b=>b.classList.remove('active'));btn.classList.add('active');selectedArea=btn.textContent;showToast('📍 '+selectedArea)}
-function enterApp(){if(!selectedProvince){showToast('⚠️ اختر محافظة أولاً');return}document.getElementById('splash').classList.add('hidden');setTimeout(()=>document.getElementById('app').classList.add('active'),400)}
-function toggleTheme(){currentTheme=currentTheme==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',currentTheme);showToast(currentTheme=='dark'?'🌙 Dark Mode':'☀️ Light Mode')}
-function toggleLang(){currentLang=currentLang=='ar'?'en':'ar';document.documentElement.lang=currentLang;document.documentElement.dir=currentLang=='ar'?'rtl':'ltr';document.getElementById('langBadge').textContent=currentLang.toUpperCase();updateUI();showToast(currentLang=='ar'?'🇪🇬 العربية':'🇬🇧 English')}
-function updateUI(){const t=translations[currentLang];document.querySelector('.splash h1').textContent=t.splashTitle;document.querySelector('.splash p').textContent=t.splashSubtitle;document.querySelector('.province-label').textContent=t.provinceLabel;document.querySelector('.area-label').textContent=t.areaLabel;document.querySelector('.continue-btn').textContent=t.continueBtn;document.getElementById('searchInput').placeholder=t.searchPlaceholder;document.getElementById('catTitle').textContent=t.catTitle;document.getElementById('areaTitle').textContent=t.areaTitle;document.getElementById('trendingTab').textContent=t.trendingTab;document.getElementById('flashTab').textContent=t.flashTab;document.getElementById('navHome').textContent=t.navHome;document.getElementById('navExplore').textContent=t.navExplore;document.getElementById('navSearch').textContent=t.navSearch;document.getElementById('navSaved').textContent=t.navSaved;document.getElementById('navProfile').textContent=t.navProfile;document.getElementById('currentLocation').innerHTML='📍 <strong>'+t.location+'</strong>'}
-function selectCategory(btn){document.querySelectorAll('.category-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');showToast('✅ '+btn.textContent)}
-function selectTab(btn){document.querySelectorAll('.deals-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active')}
-function selectAreaChip(btn){document.querySelectorAll('.area-chip').forEach(b=>b.classList.remove('active'));btn.classList.add('active');showToast('📍 '+btn.textContent)}
-function searchDeals(){const q=document.getElementById('searchInput').value;if(q.length>2)showToast('🔍 '+q)}
-function showFilters(){showToast('⚙️ Filters')}
-function showNotifications(){showToast('🔔 3 new notifications')}
-function openDeal(id){showToast('Deal #'+id)}
-function toggleFav(e,id){e.stopPropagation();const btn=e.currentTarget;if(btn.textContent=='♡'){btn.textContent='♥';btn.classList.add('active');showToast('❤️ Added')}else{btn.textContent='♡';btn.classList.remove('active');showToast('💔 Removed')}}
-function getDeal(e,id){e.stopPropagation();points+=10;showToast('⭐ +10 points! Total: '+points)}
-function navigate(item,page){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));item.classList.add('active');showToast('📱 '+page)}
-function showToast(msg){const c=document.getElementById('toastContainer');const t=document.createElement('div');t.className='toast';t.innerHTML='<div class="toast-icon">✓</div><span>'+msg+'</span>';c.appendChild(t);requestAnimationFrame(()=>t.classList.add('show'));setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400)},3000)}
-</script>
+        const NameCard = () => {
+            const [name, setName] = useState('');
+            const [loading, setLoading] = useState(false);
+            const [message, setMessage] = useState(null);
+            const [savedName, setSavedName] = useState('');
+
+            const handleSaveName = async () => {
+                if (!name.trim()) {
+                    setMessage({ type: 'error', text: 'Please enter your name' });
+                    return;
+                }
+
+                setLoading(true);
+                setMessage(null);
+
+                try {
+                    const { data, error } = await supabase
+                        .from('profiles')
+                        .insert({ name: name.trim() })
+                        .select()
+                        .single();
+
+                    if (error) throw error;
+
+                    setSavedName(data.name);
+                    setName('');
+                    setMessage({ type: 'success', text: 'Name saved to Supabase!' });
+                } catch (err) {
+                    console.error('Error:', err);
+                    setMessage({ type: 'error', text: err.message || 'Failed to save name' });
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            return (
+                <div className="profile-card">
+                    <div className="card-header">
+                        <div className="card-icon-wrapper" style={{ backgroundColor: '#e63c3c20' }}>
+                            <i className="fas fa-user" style={{ color: '#e63c3c', fontSize: '20px' }}></i>
+                        </div>
+                        <div className="card-title-wrapper">
+                            <h2 className="card-title">Your Name</h2>
+                            <p className="card-subtitle">Save to Supabase</p>
+                        </div>
+                    </div>
+
+                    <div className="card-body">
+                        <div className="input-wrapper">
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder="Enter your name"
+                                className="modern-input"
+                                disabled={loading}
+                            />
+                        </div>
+
+                        <button
+                            className={`action-btn ${loading ? 'loading' : ''}`}
+                            onClick={handleSaveName}
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <>
+                                    <i className="fas fa-spinner spin"></i>
+                                    <span>Saving...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <i className="fas fa-save"></i>
+                                    <span>Save Name</span>
+                                </>
+                            )
+                        </button>
+
+                        {message && (
+                            <div className={`message ${message.type}`}>
+                                <i className={`fas fa-${message.type === 'success' ? 'check' : 'exclamation-circle'}`}></i>
+                                <span>{message.text}</span>
+                            </div>
+                        )}
+
+                        {savedName && (
+                            <div className="saved-info">
+                                <i className="fas fa-check"></i>
+                                <span>Saved: {savedName}</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const VideoUploadCard = ({ onUploadSuccess }) => {
+            const [selectedFile, setSelectedFile] = useState(null);
+            const [loading, setLoading] = useState(false);
+            const [message, setMessage] = useState(null);
+
+            const handleFileChange = (e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                    const validTypes = ['video/mp4', 'video/quicktime', 'video/mov'];
+                    if (!validTypes.includes(file.type)) {
+                        setMessage({ type: 'error', text: 'Please select a valid video file (MP4 or MOV)' });
+                        return;
+                    }
+                    setSelectedFile(file);
+                    setMessage(null);
+                }
+            };
+
+            const handleUpload = async () => {
+                if (!selectedFile) {
+                    setMessage({ type: 'error', text: 'Please select a video file' });
+                    return;
+                }
+
+                setLoading(true);
+                setMessage(null);
+
+                try {
+                    // Upload to Supabase Storage
+                    const fileExt = selectedFile.name.split('.').pop();
+                    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+                    const filePath = `uploads/${fileName}`;
+
+                    const { data: uploadData, error: uploadError } = await supabase.storage
+                        .from('user-videos')
+                        .upload(filePath, selectedFile, {
+                            cacheControl: '3600',
+                            upsert: false,
+                        });
+
+                    if (uploadError) throw uploadError;
+
+                    // Get public URL
+                    const { data: urlData } = supabase.storage
+                        .from('user-videos')
+                        .getPublicUrl(filePath);
+
+                    const videoUrl = urlData.publicUrl;
+
+                    // Save to videos table
+                    const { error: dbError } = await supabase
+                        .from('videos')
+                        .insert({
+                            video_url: videoUrl,
+                            user_name: null,
+                        });
+
+                    if (dbError) throw dbError;
+
+                    setSelectedFile(null);
+                    setMessage({ type: 'success', text: 'Video uploaded to Supabase!' });
+                    onUploadSuccess();
+                } catch (err) {
+                    console.error('Error:', err);
+                    setMessage({ type: 'error', text: err.message || 'Failed to upload video' });
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            return (
+                <div className="profile-card">
+                    <div className="card-header">
+                        <div className="card-icon-wrapper" style={{ backgroundColor: '#2196f320' }}>
+                            <i className="fas fa-video" style={{ color: '#2196f3', fontSize: '20px' }}></i>
+                        </div>
+                        <div className="card-title-wrapper">
+                            <h2 className="card-title">Upload Video</h2>
+                            <p className="card-subtitle">Save to Supabase Storage</p>
+                        </div>
+                    </div>
+
+                    <div className="card-body">
+                        <div className="file-input-wrapper">
+                            <input
+                                type="file"
+                                accept="video/mp4,video/quicktime,video/mov"
+                                onChange={handleFileChange}
+                                className="file-input"
+                                id="video-upload"
+                                disabled={loading}
+                            />
+                            <label htmlFor="video-upload" className="file-input-label">
+                                <i className="fas fa-cloud-upload-alt"></i>
+                                <span>{selectedFile ? selectedFile.name : 'Click to select video (MP4/MOV)'}</span>
+                            </label>
+                        </div>
+
+                        {selectedFile && (
+                            <div className="file-info">
+                                <i className="fas fa-video"></i>
+                                <span>{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</span>
+                            </div>
+                        )}
+
+                        <button
+                            className={`action-btn ${loading ? 'loading' : ''}`}
+                            onClick={handleUpload}
+                            disabled={loading || !selectedFile}
+                        >
+                            {loading ? (
+                                <>
+                                    <i className="fas fa-spinner spin"></i>
+                                    <span>Uploading...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <i className="fas fa-upload"></i>
+                                    <span>Upload Video</span>
+                                </>
+                            )
+                        </button>
+
+                        {message && (
+                            <div className={`message ${message.type}`}>
+                                <i className={`fas fa-${message.type === 'success' ? 'check' : 'exclamation-circle'}`}></i>
+                                <span>{message.text}</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const VideosList = ({ videos, onDelete }) => {
+            if (videos.length === 0) return null;
+
+            return (
+                <div className="profile-card videos-card">
+                    <div className="card-header">
+                        <div className="card-icon-wrapper" style={{ backgroundColor: '#ff980020' }}>
+                            <i className="fas fa-play" style={{ color: '#ff9800', fontSize: '20px' }}></i>
+                        </div>
+                        <div className="card-title-wrapper">
+                            <h2 className="card-title">Your Videos</h2>
+                            <p className="card-subtitle">{videos.length} video{videos.length !== 1 ? 's' : ''}</p>
+                        </div>
+                    </div>
+
+                    <div className="videos-list">
+                        {videos.map((video) => (
+                            <div key={video.id} className="video-item">
+                                <div className="video-preview">
+                                    <video
+                                        src={video.video_url}
+                                        className="video-thumbnail"
+                                        preload="metadata"
+                                    />
+                                    <div className="video-play-overlay">
+                                        <i className="fas fa-play"></i>
+                                    </div>
+                                </div>
+                                <div className="video-info">
+                                    <span className="video-date">
+                                        {new Date(video.created_at).toLocaleDateString('en-US', {
+                                            month: 'short',
+                                            day: 'numeric',
+                                            year: 'numeric',
+                                        })}
+                                    </span>
+                                    <button
+                                        className="delete-btn"
+                                        onClick={() => onDelete(video.id)}
+                                    >
+                                        <i className="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        // ==================== BOTTOM NAVIGATION ====================
+
+        const BottomNav = ({ activeTab, onTabChange }) => {
+            const tabs = [
+                { id: 'home', label: 'Home', icon: 'fa-home' },
+                { id: 'explore', label: 'Explore', icon: 'fa-compass' },
+                { id: 'search', label: '', icon: 'fa-search', isCenter: true },
+                { id: 'saved', label: 'Saved', icon: 'fa-heart' },
+                { id: 'profile', label: 'Profile', icon: 'fa-user' },
+            ];
+
+            return (
+                <div className="bottom-nav">
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            className={`nav-item ${tab.isCenter ? 'nav-center' : ''} ${activeTab === tab.id ? 'active' : ''}`}
+                            onClick={() => onTabChange(tab.id)}
+                        >
+                            {tab.isCenter ? (
+                                <div className="nav-center-btn">
+                                    <i className={`fas ${tab.icon}`}></i>
+                                </div>
+                            ) : (
+                                <>
+                                    <i className={`fas ${tab.icon}`} style={{fontSize: '20px'}}></i>
+                                    <span className="nav-label">{tab.label}</span>
+                                </>
+                            )}
+                        </button>
+                    ))}
+                </div>
+            );
+        };
+
+        // ==================== MAIN APP ====================
+
+        const HomePage = () => {
+            return (
+                <div className="page-content">
+                    <HomeHeader />
+                    <HeroSection />
+                    <StatsGrid />
+                    <FlashDeals />
+                    <CategoriesSection />
+                </div>
+            );
+        };
+
+        const ProfilePage = ({ onBack }) => {
+            const [videos, setVideos] = useState([]);
+            const [loadingVideos, setLoadingVideos] = useState(false);
+
+            const fetchVideos = useCallback(async () => {
+                setLoadingVideos(true);
+                try {
+                    const { data, error } = await supabase
+                        .from('videos')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+
+                    if (error) throw error;
+                    setVideos(data || []);
+                } catch (err) {
+                    console.error('Error fetching videos:', err);
+                } finally {
+                    setLoadingVideos(false);
+                }
+            }, []);
+
+            useEffect(() => {
+                fetchVideos();
+            }, [fetchVideos]);
+
+            const handleDeleteVideo = async (id) => {
+                try {
+                    const { error } = await supabase
+                        .from('videos')
+                        .delete()
+                        .eq('id', id);
+
+                    if (error) throw error;
+                    setVideos(videos.filter((v) => v.id !== id));
+                } catch (err) {
+                    console.error('Error deleting video:', err);
+                }
+            };
+
+            return (
+                <div className="page-content">
+                    <ProfileHeader onBack={onBack} />
+                    <div className="cards-container">
+                        <NameCard />
+                        <VideoUploadCard onUploadSuccess={fetchVideos} />
+
+                        {loadingVideos ? (
+                            <div className="loading-videos">
+                                <i className="fas fa-spinner spin"></i>
+                                <span>Loading videos...</span>
+                            </div>
+                        ) : (
+                            <VideosList videos={videos} onDelete={handleDeleteVideo} />
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [currentPage, setCurrentPage] = useState('home');
+            const [activeTab, setActiveTab] = useState('home');
+
+            const handleTabChange = (tab) => {
+                setActiveTab(tab);
+                if (tab === 'profile') {
+                    setCurrentPage('profile');
+                } else if (tab === 'home') {
+                    setCurrentPage('home');
+                }
+            };
+
+            const handleBack = () => {
+                setCurrentPage('home');
+                setActiveTab('home');
+            };
+
+            return (
+                <div>
+                    <div className="app-content">
+                        {currentPage === 'home' ? (
+                            <HomePage />
+                        ) : (
+                            <ProfilePage onBack={handleBack} />
+                        )}
+                    </div>
+                    <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 </html>
