@@ -699,11 +699,25 @@
     </div>
 
     <script>
-        // Supabase Config
-        const SUPABASE_URL = 'https://polhqbqtsirdpkgtefni.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_lvq6bKez0fOQP1CYcnqyjA_xCLufW5y';
+        // استني Supabase يتحمل
+        let supabase = null;
         
-        const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        function initSupabase() {
+            if (typeof supabaseJs === 'undefined') {
+                setTimeout(initSupabase, 100);
+                return;
+            }
+            
+            supabase = supabaseJs.createClient(
+                'https://polhqbqtsirdpkgtefni.supabase.co',
+                'sb_publishable_lvq6bKez0fOQP1CYcnqyjA_xCLufW5y'
+            );
+            
+            console.log('Supabase initialized!');
+        }
+        
+        // ابدأي الانتظار
+        initSupabase();
 
         function showPage(page) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -724,6 +738,11 @@
             
             if (!name) {
                 msgDiv.innerHTML = '<div class="message error">❌ Please enter your name</div>';
+                return;
+            }
+            
+            if (!supabase) {
+                msgDiv.innerHTML = '<div class="message error">❌ Supabase not loaded yet. Wait 2 seconds and try again.</div>';
                 return;
             }
             
@@ -750,6 +769,11 @@
             
             if (!fileInput.files[0]) {
                 msgDiv.innerHTML = '<div class="message error">❌ Please select a video</div>';
+                return;
+            }
+            
+            if (!supabase) {
+                msgDiv.innerHTML = '<div class="message error">❌ Supabase not loaded yet. Wait 2 seconds and try again.</div>';
                 return;
             }
             
