@@ -2,13 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CityDeals EG</title>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -17,35 +12,18 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: #0a0a0a;
             color: #fafafa;
-            overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        #root {
             max-width: 430px;
             margin: 0 auto;
             min-height: 100vh;
-            background-color: #0a0a0a;
-            position: relative;
             padding-bottom: 80px;
         }
 
-        .page-content {
-            padding: 16px;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ==================== HOME PAGE ==================== */
+        /* Header */
         .header {
-            margin-bottom: 16px;
+            padding: 16px;
         }
 
         .header-top {
@@ -78,26 +56,6 @@
             font-weight: 600;
         }
 
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .icon-btn {
-            background: none;
-            border: none;
-            color: #fafafa;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            transition: background-color 0.2s;
-        }
-
-        .icon-btn:hover {
-            background-color: #1e1e1e;
-        }
-
         .location-btn {
             display: flex;
             align-items: center;
@@ -109,27 +67,21 @@
             color: #fafafa;
             font-size: 13px;
             cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .location-btn:hover {
-            background-color: #2a2a2a;
         }
 
         .offers-count {
             font-size: 13px;
             color: #828282;
+            padding: 0 16px;
         }
 
+        /* Hero Section */
         .hero-section {
             background: linear-gradient(135deg, #1e1e1e 0%, #0a0a0a 100%);
             border-radius: 20px;
             padding: 24px;
-            margin-bottom: 24px;
-            position: relative;
-            overflow: hidden;
+            margin: 0 16px 24px;
             border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
         }
 
         .hero-stats {
@@ -156,7 +108,6 @@
             font-size: 11px;
             color: #828282;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .hero-divider {
@@ -176,8 +127,9 @@
             color: #828282;
         }
 
+        /* Stats */
         .stats-grid {
-            margin-bottom: 24px;
+            margin: 0 16px 24px;
         }
 
         .section-title-small {
@@ -186,7 +138,6 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 12px;
-            font-weight: 600;
         }
 
         .stats-row {
@@ -204,12 +155,6 @@
             align-items: center;
             gap: 6px;
             border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
         }
 
         .stat-value {
@@ -220,12 +165,11 @@
         .stat-label {
             font-size: 11px;
             color: #828282;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
+        /* Flash Deals */
         .flash-deals-section {
-            margin-bottom: 24px;
+            margin: 0 16px 24px;
         }
 
         .section-header {
@@ -233,16 +177,6 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 16px;
-        }
-
-        .section-title-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .flash-icon {
-            color: #ff9800;
         }
 
         .section-title {
@@ -274,13 +208,6 @@
             overflow: hidden;
             flex-shrink: 0;
             border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s;
-            cursor: pointer;
-        }
-
-        .deal-card:hover {
-            transform: translateY(-4px);
         }
 
         .deal-image {
@@ -290,9 +217,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .deal-emoji {
             font-size: 52px;
         }
 
@@ -303,33 +227,8 @@
             background-color: #e63c3c;
             border-radius: 6px;
             padding: 4px 8px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
             font-size: 10px;
             font-weight: 700;
-        }
-
-        .favorite-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fafafa;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .favorite-btn:hover {
-            background: rgba(230, 60, 60, 0.3);
-            border-color: #e63c3c;
         }
 
         .discount-badge {
@@ -360,9 +259,6 @@
         }
 
         .deal-location {
-            display: flex;
-            align-items: center;
-            gap: 4px;
             font-size: 11px;
             color: #828282;
             margin-bottom: 10px;
@@ -377,7 +273,6 @@
         .price-current {
             font-size: 16px;
             font-weight: 700;
-            color: #fafafa;
         }
 
         .price-original {
@@ -386,8 +281,9 @@
             text-decoration: line-through;
         }
 
+        /* Categories */
         .categories-section {
-            margin-bottom: 24px;
+            margin: 0 16px 24px;
         }
 
         .categories-grid {
@@ -403,15 +299,7 @@
             flex-direction: column;
             align-items: center;
             gap: 10px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
             border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .category-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         .category-icon {
@@ -422,7 +310,6 @@
             align-items: center;
             justify-content: center;
             font-size: 26px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
         .category-name {
@@ -435,69 +322,33 @@
             color: #828282;
         }
 
-        /* ==================== PROFILE PAGE ==================== */
+        /* Profile Page */
         .profile-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 24px;
-            padding: 8px 0;
+            padding: 16px;
         }
 
         .back-btn {
             background: none;
             border: none;
             color: #fafafa;
+            font-size: 20px;
             cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
-        .back-btn:hover {
-            background-color: #1e1e1e;
-        }
-
-        .header-title-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .header-icon {
-            color: #e63c3c;
-        }
-
-        .header-title {
+        .profile-title {
             font-size: 20px;
             font-weight: 600;
-        }
-
-        .header-spacer {
-            width: 36px;
-        }
-
-        .cards-container {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
         }
 
         .profile-card {
             background: linear-gradient(135deg, #141414 0%, #1e1e1e 100%);
             border-radius: 20px;
             padding: 24px;
+            margin: 0 16px 16px;
             border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(255, 255, 255, 0.05) inset;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .profile-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(255, 255, 255, 0.05) inset;
         }
 
         .card-header {
@@ -507,26 +358,19 @@
             margin-bottom: 24px;
         }
 
-        .card-icon-wrapper {
+        .card-icon {
             width: 48px;
             height: 48px;
             border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .card-title-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
+            font-size: 20px;
         }
 
         .card-title {
             font-size: 17px;
             font-weight: 600;
-            color: #fafafa;
         }
 
         .card-subtitle {
@@ -534,14 +378,8 @@
             color: #828282;
         }
 
-        .card-body {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
         .input-wrapper {
-            position: relative;
+            margin-bottom: 16px;
         }
 
         .modern-input {
@@ -552,8 +390,6 @@
             border-radius: 16px;
             color: #fafafa;
             font-size: 15px;
-            font-family: inherit;
-            transition: border-color 0.2s, box-shadow 0.2s;
             outline: none;
         }
 
@@ -561,76 +397,7 @@
             color: #828282;
         }
 
-        .modern-input:focus {
-            border-color: #e63c3c;
-            box-shadow: 0 0 0 3px rgba(230, 60, 60, 0.15);
-        }
-
-        .modern-input:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .file-input-wrapper {
-            position: relative;
-        }
-
-        .file-input {
-            position: absolute;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
-
-        .file-input-label {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            padding: 40px 24px;
-            background: linear-gradient(135deg, #0a0a0a 0%, #141414 100%);
-            border: 2px dashed rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            color: #828282;
-            font-size: 14px;
-            text-align: center;
-            transition: border-color 0.2s, background-color 0.2s;
-            cursor: pointer;
-        }
-
-        .file-input-label:hover {
-            border-color: #e63c3c;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1e1e1e 100%);
-        }
-
-        .file-input-label i {
-            color: #e63c3c;
-            font-size: 24px;
-        }
-
-        .file-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 16px;
-            background-color: #0a0a0a;
-            border-radius: 12px;
-            font-size: 13px;
-            color: #828282;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .file-info i {
-            color: #2196f3;
-        }
-
         .action-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
             width: 100%;
             padding: 16px 20px;
             background: linear-gradient(135deg, #e63c3c 0%, #c62828 100%);
@@ -639,48 +406,41 @@
             color: #fafafa;
             font-size: 15px;
             font-weight: 600;
-            font-family: inherit;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
-            box-shadow: 0 4px 16px rgba(230, 60, 60, 0.3);
-        }
-
-        .action-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(230, 60, 60, 0.4);
-        }
-
-        .action-btn:active:not(:disabled) {
-            transform: translateY(0);
         }
 
         .action-btn:disabled {
             opacity: 0.6;
-            cursor: not-allowed;
         }
 
-        .action-btn.loading {
-            background: linear-gradient(135deg, #828282 0%, #666 100%);
-            box-shadow: none;
+        .file-input-wrapper {
+            margin-bottom: 16px;
         }
 
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        .file-input {
+            display: none;
         }
 
-        .spin {
-            animation: spin 1s linear infinite;
+        .file-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 40px 24px;
+            background: linear-gradient(135deg, #0a0a0a 0%, #141414 100%);
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            color: #828282;
+            font-size: 14px;
+            text-align: center;
+            cursor: pointer;
         }
 
         .message {
-            display: flex;
-            align-items: center;
-            gap: 10px;
             padding: 14px 16px;
             border-radius: 14px;
             font-size: 13px;
-            font-weight: 500;
+            margin-top: 16px;
         }
 
         .message.success {
@@ -695,19 +455,7 @@
             border: 1px solid rgba(230, 60, 60, 0.2);
         }
 
-        .saved-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 16px;
-            background-color: rgba(76, 175, 80, 0.1);
-            border-radius: 12px;
-            font-size: 13px;
-            color: #4caf50;
-            border: 1px solid rgba(76, 175, 80, 0.15);
-        }
-
-        /* ==================== BOTTOM NAVIGATION ==================== */
+        /* Bottom Nav */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -715,14 +463,12 @@
             transform: translateX(-50%);
             width: 100%;
             max-width: 430px;
-            background: linear-gradient(180deg, rgba(10, 10, 10, 0.95) 0%, #0a0a0a 100%);
-            backdrop-filter: blur(20px);
+            background: #0a0a0a;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             justify-content: space-around;
             align-items: center;
             padding: 8px 0 24px;
-            z-index: 100;
         }
 
         .nav-item {
@@ -735,17 +481,11 @@
             color: #828282;
             cursor: pointer;
             padding: 8px 16px;
-            transition: color 0.2s;
-            font-family: inherit;
+            font-size: 10px;
         }
 
         .nav-item.active {
             color: #e63c3c;
-        }
-
-        .nav-label {
-            font-size: 10px;
-            font-weight: 500;
         }
 
         .nav-center {
@@ -762,799 +502,280 @@
             align-items: center;
             justify-content: center;
             color: #fafafa;
-            box-shadow: 0 4px 16px rgba(230, 60, 60, 0.4);
-            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 20px;
         }
 
-        .nav-center-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 24px rgba(230, 60, 60, 0.5);
+        /* Hide/Show pages */
+        .page {
+            display: none;
         }
 
-        /* ==================== VIDEOS LIST ==================== */
-        .videos-card {
-            margin-top: 8px;
-        }
-
-        .videos-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .video-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            background: linear-gradient(135deg, #0a0a0a 0%, #141414 100%);
-            border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .video-preview {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            border-radius: 12px;
-            overflow: hidden;
-            flex-shrink: 0;
-            background-color: #0a0a0a;
-        }
-
-        .video-thumbnail {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .video-play-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.4);
-            color: #fafafa;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-        .video-preview:hover .video-play-overlay {
-            opacity: 1;
-        }
-
-        .video-info {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-        }
-
-        .video-date {
-            font-size: 13px;
-            color: #828282;
-        }
-
-        .delete-btn {
-            background: none;
-            border: none;
-            color: #e63c3c;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            transition: background-color 0.2s;
-        }
-
-        .delete-btn:hover {
-            background-color: rgba(230, 60, 60, 0.15);
-        }
-
-        .loading-videos {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            padding: 40px;
-            color: #828282;
-            font-size: 14px;
-        }
-
-        /* ==================== SCROLLBAR ==================== */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #0a0a0a;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #333;
-            border-radius: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #444;
-        }
-
-        /* ==================== RESPONSIVE ==================== */
-        @media (max-width: 480px) {
-            .page-content {
-                padding: 12px;
-            }
-
-            .hero-section {
-                padding: 20px;
-            }
-
-            .profile-card {
-                padding: 20px;
-            }
-
-            .deal-card {
-                min-width: 150px;
-            }
-
-            .categories-grid {
-                gap: 8px;
-            }
-
-            .category-card {
-                padding: 16px 6px;
-            }
+        .page.active {
+            display: block;
         }
     </style>
-<base target="_blank">
 </head>
 <body>
-    <div id="root"></div>
 
-    <script type="text/babel">
-        const { useState, useEffect, useCallback } = React;
-
-        // ==================== SUPABASE CONFIG ====================
-        const SUPABASE_URL = 'https://polhqbqtsirdpkgtefni.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_lvq6bKez0fOQP1CYcnqyjA_xCLufW5y';
-
-        const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        // ==================== MOCK DATA ====================
-        const deals = [
-            {
-                id: '1',
-                title: 'Big Burger Meal',
-                shop: 'Burger Hub',
-                location: 'Dokki, Giza',
-                originalPrice: 150,
-                discountedPrice: 90,
-                discount: '-40%',
-                image: '🍔',
-                isFlash: true,
-            },
-            {
-                id: '2',
-                title: 'Pizza Night',
-                shop: 'Pizza Palace',
-                location: 'Dokki, Giza',
-                originalPrice: 120,
-                discountedPrice: 60,
-                discount: '-50%',
-                image: '🍕',
-                isFlash: true,
-            },
-            {
-                id: '3',
-                title: 'Cold Brew',
-                shop: 'The Bean',
-                location: 'Dokki, Giza',
-                originalPrice: 75,
-                discountedPrice: 75,
-                discount: '',
-                image: '☕',
-                isFlash: true,
-            },
-        ];
-
-        const categories = [
-            { id: '1', name: 'Beauty', icon: '💄', dealCount: 2, color: '#e91e63' },
-            { id: '2', name: 'Cafe', icon: '☕', dealCount: 2, color: '#795548' },
-            { id: '3', name: 'Electronics', icon: '📱', dealCount: 3, color: '#2196f3' },
-            { id: '4', name: 'Fashion', icon: '👗', dealCount: 4, color: '#9c27b0' },
-        ];
-
-        const stats = [
-            { value: '16', label: 'Total Deals', color: '#e63c3c' },
-            { value: '6', label: 'Flash Deals', color: '#ff9800' },
-            { value: '16', label: 'Shops', color: '#4caf50' },
-        ];
-
-        // ==================== HOME PAGE COMPONENTS ====================
-
-        const HomeHeader = () => {
-            return (
-                <div className="header">
-                    <div className="header-top">
-                        <div className="logo">
-                            <div className="logo-icon">C</div>
-                            <span className="logo-text">City Deals</span>
-                        </div>
-                        <div className="header-actions">
-                            <button className="icon-btn">
-                                <i className="fas fa-bell"></i>
-                            </button>
-                            <button className="location-btn">
-                                <i className="fas fa-map-marker-alt"></i>
-                                <span>Dokki</span>
-                                <i className="fas fa-chevron-down" style={{fontSize: '12px'}}></i>
-                            </button>
-                        </div>
-                    </div>
-                    <p className="offers-count">16 offers available</p>
+    <!-- HOME PAGE -->
+    <div id="home-page" class="page active">
+        <div class="header">
+            <div class="header-top">
+                <div class="logo">
+                    <div class="logo-icon">C</div>
+                    <span class="logo-text">City Deals</span>
                 </div>
-            );
-        };
+                <button class="location-btn">📍 Dokki ▼</button>
+            </div>
+            <p class="offers-count">16 offers available</p>
+        </div>
 
-        const HeroSection = () => {
-            return (
-                <div className="hero-section">
-                    <div className="hero-stats">
-                        <div className="hero-stat">
-                            <span className="hero-stat-value">16</span>
-                            <span className="hero-stat-label">Total Deals</span>
-                        </div>
-                        <div className="hero-divider" />
-                        <div className="hero-stat">
-                            <span className="hero-stat-value">6</span>
-                            <span className="hero-stat-label">Flash Deals</span>
-                        </div>
-                        <div className="hero-divider" />
-                        <div className="hero-stat">
-                            <span className="hero-stat-value">16</span>
-                            <span className="hero-stat-label">Shops</span>
-                        </div>
-                    </div>
-                    <h2 className="hero-title">Deals in Dokki, Giza</h2>
-                    <p className="hero-subtitle">16 offers available</p>
+        <div class="hero-section">
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <span class="hero-stat-value">16</span>
+                    <span class="hero-stat-label">Total Deals</span>
                 </div>
-            );
-        };
+                <div class="hero-divider"></div>
+                <div class="hero-stat">
+                    <span class="hero-stat-value">6</span>
+                    <span class="hero-stat-label">Flash Deals</span>
+                </div>
+                <div class="hero-divider"></div>
+                <div class="hero-stat">
+                    <span class="hero-stat-value">16</span>
+                    <span class="hero-stat-label">Shops</span>
+                </div>
+            </div>
+            <h2 class="hero-title">Deals in Dokki, Giza</h2>
+            <p class="hero-subtitle">16 offers available</p>
+        </div>
 
-        const StatsGrid = () => {
-            return (
-                <div className="stats-grid">
-                    <h3 className="section-title-small">CATEGORIES</h3>
-                    <div className="stats-row">
-                        {stats.map((stat, index) => (
-                            <div key={index} className="stat-card">
-                                <span className="stat-value" style={{ color: stat.color }}>
-                                    {stat.value}
-                                </span>
-                                <span className="stat-label">{stat.label}</span>
-                            </div>
-                        ))}
+        <div class="stats-grid">
+            <h3 class="section-title-small">CATEGORIES</h3>
+            <div class="stats-row">
+                <div class="stat-card">
+                    <span class="stat-value" style="color: #e63c3c;">16</span>
+                    <span class="stat-label">Total Deals</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" style="color: #ff9800;">6</span>
+                    <span class="stat-label">Flash Deals</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" style="color: #4caf50;">16</span>
+                    <span class="stat-label">Shops</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flash-deals-section">
+            <div class="section-header">
+                <span class="section-title">⚡ Flash Deals</span>
+                <span class="deals-count">8 available</span>
+            </div>
+            <div class="deals-scroll">
+                <div class="deal-card">
+                    <div class="deal-image">
+                        🍔
+                        <span class="flash-badge">⚡ Flash</span>
+                        <span class="discount-badge">-40%</span>
+                    </div>
+                    <div class="deal-info">
+                        <h4 class="deal-title">Big Burger Meal</h4>
+                        <p class="deal-shop">Burger Hub</p>
+                        <p class="deal-location">📍 Dokki, Giza</p>
+                        <div class="deal-price">
+                            <span class="price-current">EGP 90</span>
+                            <span class="price-original">EGP 150</span>
+                        </div>
                     </div>
                 </div>
-            );
-        };
-
-        const FlashDeals = () => {
-            return (
-                <div className="flash-deals-section">
-                    <div className="section-header">
-                        <div className="section-title-wrapper">
-                            <i className="fas fa-bolt flash-icon"></i>
-                            <h3 className="section-title">Flash Deals</h3>
-                        </div>
-                        <span className="deals-count">8 available</span>
+                <div class="deal-card">
+                    <div class="deal-image">
+                        🍕
+                        <span class="flash-badge">⚡ Flash</span>
+                        <span class="discount-badge">-50%</span>
                     </div>
-                    <div className="deals-scroll">
-                        {deals.map((deal) => (
-                            <div key={deal.id} className="deal-card">
-                                <div className="deal-image">
-                                    <span className="deal-emoji">{deal.image}</span>
-                                    {deal.isFlash && (
-                                        <div className="flash-badge">
-                                            <i className="fas fa-bolt"></i>
-                                            <span>Flash</span>
-                                        </div>
-                                    )}
-                                    <button className="favorite-btn">
-                                        <i className="far fa-heart"></i>
-                                    </button>
-                                    {deal.discount && (
-                                        <span className="discount-badge">{deal.discount}</span>
-                                    )}
-                                </div>
-                                <div className="deal-info">
-                                    <h4 className="deal-title">{deal.title}</h4>
-                                    <p className="deal-shop">{deal.shop}</p>
-                                    <div className="deal-location">
-                                        <i className="fas fa-map-marker-alt" style={{fontSize: '12px'}}></i>
-                                        <span>{deal.location}</span>
-                                    </div>
-                                    <div className="deal-price">
-                                        <span className="price-current">EGP {deal.discountedPrice}</span>
-                                        {deal.originalPrice !== deal.discountedPrice && (
-                                            <span className="price-original">EGP {deal.originalPrice}</span>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            );
-        };
-
-        const CategoriesSection = () => {
-            return (
-                <div className="categories-section">
-                    <h3 className="section-title-small">CATEGORIES</h3>
-                    <div className="categories-grid">
-                        {categories.map((category) => (
-                            <div
-                                key={category.id}
-                                className="category-card"
-                                style={{ backgroundColor: category.color + '20' }}
-                            >
-                                <div
-                                    className="category-icon"
-                                    style={{ backgroundColor: category.color }}
-                                >
-                                    <span>{category.icon}</span>
-                                </div>
-                                <span className="category-name">{category.name}</span>
-                                <span className="category-count">{category.dealCount} deals</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            );
-        };
-
-        // ==================== PROFILE PAGE COMPONENTS ====================
-
-        const ProfileHeader = ({ onBack }) => {
-            return (
-                <div className="profile-header">
-                    <button className="back-btn" onClick={onBack}>
-                        <i className="fas fa-arrow-left"></i>
-                    </button>
-                    <div className="header-title-wrapper">
-                        <i className="fas fa-user header-icon"></i>
-                        <h1 className="header-title">Profile</h1>
-                    </div>
-                    <div className="header-spacer"></div>
-                </div>
-            );
-        };
-
-        const NameCard = () => {
-            const [name, setName] = useState('');
-            const [loading, setLoading] = useState(false);
-            const [message, setMessage] = useState(null);
-            const [savedName, setSavedName] = useState('');
-
-            const handleSaveName = async () => {
-                if (!name.trim()) {
-                    setMessage({ type: 'error', text: 'Please enter your name' });
-                    return;
-                }
-
-                setLoading(true);
-                setMessage(null);
-
-                try {
-                    const { data, error } = await supabase
-                        .from('profiles')
-                        .insert({ name: name.trim() })
-                        .select()
-                        .single();
-
-                    if (error) throw error;
-
-                    setSavedName(data.name);
-                    setName('');
-                    setMessage({ type: 'success', text: 'Name saved to Supabase!' });
-                } catch (err) {
-                    console.error('Error:', err);
-                    setMessage({ type: 'error', text: err.message || 'Failed to save name' });
-                } finally {
-                    setLoading(false);
-                }
-            };
-
-            return (
-                <div className="profile-card">
-                    <div className="card-header">
-                        <div className="card-icon-wrapper" style={{ backgroundColor: '#e63c3c20' }}>
-                            <i className="fas fa-user" style={{ color: '#e63c3c', fontSize: '20px' }}></i>
-                        </div>
-                        <div className="card-title-wrapper">
-                            <h2 className="card-title">Your Name</h2>
-                            <p className="card-subtitle">Save to Supabase</p>
+                    <div class="deal-info">
+                        <h4 class="deal-title">Pizza Night</h4>
+                        <p class="deal-shop">Pizza Palace</p>
+                        <p class="deal-location">📍 Dokki, Giza</p>
+                        <div class="deal-price">
+                            <span class="price-current">EGP 60</span>
+                            <span class="price-original">EGP 120</span>
                         </div>
                     </div>
-
-                    <div className="card-body">
-                        <div className="input-wrapper">
-                            <input
-                                type="text"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                placeholder="Enter your name"
-                                className="modern-input"
-                                disabled={loading}
-                            />
-                        </div>
-
-                        <button
-                            className={`action-btn ${loading ? 'loading' : ''}`}
-                            onClick={handleSaveName}
-                            disabled={loading}
-                        >
-                            {loading ? (
-                                <>
-                                    <i className="fas fa-spinner spin"></i>
-                                    <span>Saving...</span>
-                                </>
-                            ) : (
-                                <>
-                                    <i className="fas fa-save"></i>
-                                    <span>Save Name</span>
-                                </>
-                            )
-                        </button>
-
-                        {message && (
-                            <div className={`message ${message.type}`}>
-                                <i className={`fas fa-${message.type === 'success' ? 'check' : 'exclamation-circle'}`}></i>
-                                <span>{message.text}</span>
-                            </div>
-                        )}
-
-                        {savedName && (
-                            <div className="saved-info">
-                                <i className="fas fa-check"></i>
-                                <span>Saved: {savedName}</span>
-                            </div>
-                        )}
-                    </div>
                 </div>
-            );
-        };
-
-        const VideoUploadCard = ({ onUploadSuccess }) => {
-            const [selectedFile, setSelectedFile] = useState(null);
-            const [loading, setLoading] = useState(false);
-            const [message, setMessage] = useState(null);
-
-            const handleFileChange = (e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                    const validTypes = ['video/mp4', 'video/quicktime', 'video/mov'];
-                    if (!validTypes.includes(file.type)) {
-                        setMessage({ type: 'error', text: 'Please select a valid video file (MP4 or MOV)' });
-                        return;
-                    }
-                    setSelectedFile(file);
-                    setMessage(null);
-                }
-            };
-
-            const handleUpload = async () => {
-                if (!selectedFile) {
-                    setMessage({ type: 'error', text: 'Please select a video file' });
-                    return;
-                }
-
-                setLoading(true);
-                setMessage(null);
-
-                try {
-                    // Upload to Supabase Storage
-                    const fileExt = selectedFile.name.split('.').pop();
-                    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-                    const filePath = `uploads/${fileName}`;
-
-                    const { data: uploadData, error: uploadError } = await supabase.storage
-                        .from('user-videos')
-                        .upload(filePath, selectedFile, {
-                            cacheControl: '3600',
-                            upsert: false,
-                        });
-
-                    if (uploadError) throw uploadError;
-
-                    // Get public URL
-                    const { data: urlData } = supabase.storage
-                        .from('user-videos')
-                        .getPublicUrl(filePath);
-
-                    const videoUrl = urlData.publicUrl;
-
-                    // Save to videos table
-                    const { error: dbError } = await supabase
-                        .from('videos')
-                        .insert({
-                            video_url: videoUrl,
-                            user_name: null,
-                        });
-
-                    if (dbError) throw dbError;
-
-                    setSelectedFile(null);
-                    setMessage({ type: 'success', text: 'Video uploaded to Supabase!' });
-                    onUploadSuccess();
-                } catch (err) {
-                    console.error('Error:', err);
-                    setMessage({ type: 'error', text: err.message || 'Failed to upload video' });
-                } finally {
-                    setLoading(false);
-                }
-            };
-
-            return (
-                <div className="profile-card">
-                    <div className="card-header">
-                        <div className="card-icon-wrapper" style={{ backgroundColor: '#2196f320' }}>
-                            <i className="fas fa-video" style={{ color: '#2196f3', fontSize: '20px' }}></i>
-                        </div>
-                        <div className="card-title-wrapper">
-                            <h2 className="card-title">Upload Video</h2>
-                            <p className="card-subtitle">Save to Supabase Storage</p>
+                <div class="deal-card">
+                    <div class="deal-image">
+                        ☕
+                        <span class="flash-badge">⚡ Flash</span>
+                    </div>
+                    <div class="deal-info">
+                        <h4 class="deal-title">Cold Brew</h4>
+                        <p class="deal-shop">The Bean</p>
+                        <p class="deal-location">📍 Dokki, Giza</p>
+                        <div class="deal-price">
+                            <span class="price-current">EGP 75</span>
                         </div>
                     </div>
-
-                    <div className="card-body">
-                        <div className="file-input-wrapper">
-                            <input
-                                type="file"
-                                accept="video/mp4,video/quicktime,video/mov"
-                                onChange={handleFileChange}
-                                className="file-input"
-                                id="video-upload"
-                                disabled={loading}
-                            />
-                            <label htmlFor="video-upload" className="file-input-label">
-                                <i className="fas fa-cloud-upload-alt"></i>
-                                <span>{selectedFile ? selectedFile.name : 'Click to select video (MP4/MOV)'}</span>
-                            </label>
-                        </div>
-
-                        {selectedFile && (
-                            <div className="file-info">
-                                <i className="fas fa-video"></i>
-                                <span>{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</span>
-                            </div>
-                        )}
-
-                        <button
-                            className={`action-btn ${loading ? 'loading' : ''}`}
-                            onClick={handleUpload}
-                            disabled={loading || !selectedFile}
-                        >
-                            {loading ? (
-                                <>
-                                    <i className="fas fa-spinner spin"></i>
-                                    <span>Uploading...</span>
-                                </>
-                            ) : (
-                                <>
-                                    <i className="fas fa-upload"></i>
-                                    <span>Upload Video</span>
-                                </>
-                            )
-                        </button>
-
-                        {message && (
-                            <div className={`message ${message.type}`}>
-                                <i className={`fas fa-${message.type === 'success' ? 'check' : 'exclamation-circle'}`}></i>
-                                <span>{message.text}</span>
-                            </div>
-                        )}
-                    </div>
                 </div>
-            );
-        };
+            </div>
+        </div>
 
-        const VideosList = ({ videos, onDelete }) => {
-            if (videos.length === 0) return null;
-
-            return (
-                <div className="profile-card videos-card">
-                    <div className="card-header">
-                        <div className="card-icon-wrapper" style={{ backgroundColor: '#ff980020' }}>
-                            <i className="fas fa-play" style={{ color: '#ff9800', fontSize: '20px' }}></i>
-                        </div>
-                        <div className="card-title-wrapper">
-                            <h2 className="card-title">Your Videos</h2>
-                            <p className="card-subtitle">{videos.length} video{videos.length !== 1 ? 's' : ''}</p>
-                        </div>
-                    </div>
-
-                    <div className="videos-list">
-                        {videos.map((video) => (
-                            <div key={video.id} className="video-item">
-                                <div className="video-preview">
-                                    <video
-                                        src={video.video_url}
-                                        className="video-thumbnail"
-                                        preload="metadata"
-                                    />
-                                    <div className="video-play-overlay">
-                                        <i className="fas fa-play"></i>
-                                    </div>
-                                </div>
-                                <div className="video-info">
-                                    <span className="video-date">
-                                        {new Date(video.created_at).toLocaleDateString('en-US', {
-                                            month: 'short',
-                                            day: 'numeric',
-                                            year: 'numeric',
-                                        })}
-                                    </span>
-                                    <button
-                                        className="delete-btn"
-                                        onClick={() => onDelete(video.id)}
-                                    >
-                                        <i className="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+        <div class="categories-section">
+            <h3 class="section-title-small">CATEGORIES</h3>
+            <div class="categories-grid">
+                <div class="category-card" style="background-color: #e91e6320;">
+                    <div class="category-icon" style="background-color: #e91e63;">💄</div>
+                    <span class="category-name">Beauty</span>
+                    <span class="category-count">2 deals</span>
                 </div>
-            );
-        };
-
-        // ==================== BOTTOM NAVIGATION ====================
-
-        const BottomNav = ({ activeTab, onTabChange }) => {
-            const tabs = [
-                { id: 'home', label: 'Home', icon: 'fa-home' },
-                { id: 'explore', label: 'Explore', icon: 'fa-compass' },
-                { id: 'search', label: '', icon: 'fa-search', isCenter: true },
-                { id: 'saved', label: 'Saved', icon: 'fa-heart' },
-                { id: 'profile', label: 'Profile', icon: 'fa-user' },
-            ];
-
-            return (
-                <div className="bottom-nav">
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab.id}
-                            className={`nav-item ${tab.isCenter ? 'nav-center' : ''} ${activeTab === tab.id ? 'active' : ''}`}
-                            onClick={() => onTabChange(tab.id)}
-                        >
-                            {tab.isCenter ? (
-                                <div className="nav-center-btn">
-                                    <i className={`fas ${tab.icon}`}></i>
-                                </div>
-                            ) : (
-                                <>
-                                    <i className={`fas ${tab.icon}`} style={{fontSize: '20px'}}></i>
-                                    <span className="nav-label">{tab.label}</span>
-                                </>
-                            )}
-                        </button>
-                    ))}
+                <div class="category-card" style="background-color: #79554820;">
+                    <div class="category-icon" style="background-color: #795548;">☕</div>
+                    <span class="category-name">Cafe</span>
+                    <span class="category-count">2 deals</span>
                 </div>
-            );
-        };
-
-        // ==================== MAIN APP ====================
-
-        const HomePage = () => {
-            return (
-                <div className="page-content">
-                    <HomeHeader />
-                    <HeroSection />
-                    <StatsGrid />
-                    <FlashDeals />
-                    <CategoriesSection />
+                <div class="category-card" style="background-color: #2196f320;">
+                    <div class="category-icon" style="background-color: #2196f3;">📱</div>
+                    <span class="category-name">Electronics</span>
+                    <span class="category-count">3 deals</span>
                 </div>
-            );
-        };
-
-        const ProfilePage = ({ onBack }) => {
-            const [videos, setVideos] = useState([]);
-            const [loadingVideos, setLoadingVideos] = useState(false);
-
-            const fetchVideos = useCallback(async () => {
-                setLoadingVideos(true);
-                try {
-                    const { data, error } = await supabase
-                        .from('videos')
-                        .select('*')
-                        .order('created_at', { ascending: false });
-
-                    if (error) throw error;
-                    setVideos(data || []);
-                } catch (err) {
-                    console.error('Error fetching videos:', err);
-                } finally {
-                    setLoadingVideos(false);
-                }
-            }, []);
-
-            useEffect(() => {
-                fetchVideos();
-            }, [fetchVideos]);
-
-            const handleDeleteVideo = async (id) => {
-                try {
-                    const { error } = await supabase
-                        .from('videos')
-                        .delete()
-                        .eq('id', id);
-
-                    if (error) throw error;
-                    setVideos(videos.filter((v) => v.id !== id));
-                } catch (err) {
-                    console.error('Error deleting video:', err);
-                }
-            };
-
-            return (
-                <div className="page-content">
-                    <ProfileHeader onBack={onBack} />
-                    <div className="cards-container">
-                        <NameCard />
-                        <VideoUploadCard onUploadSuccess={fetchVideos} />
-
-                        {loadingVideos ? (
-                            <div className="loading-videos">
-                                <i className="fas fa-spinner spin"></i>
-                                <span>Loading videos...</span>
-                            </div>
-                        ) : (
-                            <VideosList videos={videos} onDelete={handleDeleteVideo} />
-                        )}
-                    </div>
+                <div class="category-card" style="background-color: #9c27b020;">
+                    <div class="category-icon" style="background-color: #9c27b0;">👗</div>
+                    <span class="category-name">Fashion</span>
+                    <span class="category-count">4 deals</span>
                 </div>
-            );
-        };
+            </div>
+        </div>
+    </div>
 
-        const App = () => {
-            const [currentPage, setCurrentPage] = useState('home');
-            const [activeTab, setActiveTab] = useState('home');
+    <!-- PROFILE PAGE -->
+    <div id="profile-page" class="page">
+        <div class="profile-header">
+            <button class="back-btn" onclick="showPage('home')">←</button>
+            <span class="profile-title">👤 Profile</span>
+            <span></span>
+        </div>
 
-            const handleTabChange = (tab) => {
-                setActiveTab(tab);
-                if (tab === 'profile') {
-                    setCurrentPage('profile');
-                } else if (tab === 'home') {
-                    setCurrentPage('home');
-                }
-            };
-
-            const handleBack = () => {
-                setCurrentPage('home');
-                setActiveTab('home');
-            };
-
-            return (
+        <div class="profile-card">
+            <div class="card-header">
+                <div class="card-icon" style="background-color: #e63c3c20; color: #e63c3c;">👤</div>
                 <div>
-                    <div className="app-content">
-                        {currentPage === 'home' ? (
-                            <HomePage />
-                        ) : (
-                            <ProfilePage onBack={handleBack} />
-                        )}
-                    </div>
-                    <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
+                    <div class="card-title">Your Name</div>
+                    <div class="card-subtitle">Save your profile</div>
                 </div>
-            );
-        };
+            </div>
+            <div class="input-wrapper">
+                <input type="text" id="name-input" class="modern-input" placeholder="Enter your name">
+            </div>
+            <button class="action-btn" onclick="saveName()">💾 Save Name</button>
+            <div id="name-message"></div>
+        </div>
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        <div class="profile-card">
+            <div class="card-header">
+                <div class="card-icon" style="background-color: #2196f320; color: #2196f3;">🎥</div>
+                <div>
+                    <div class="card-title">Upload Video</div>
+                    <div class="card-subtitle">Share your moments</div>
+                </div>
+            </div>
+            <div class="file-input-wrapper">
+                <input type="file" id="video-input" class="file-input" accept="video/mp4,video/mov">
+                <label for="video-input" class="file-label">
+                    <span style="font-size: 24px;">⬆️</span>
+                    <span id="file-label-text">Click to select video (MP4/MOV)</span>
+                </label>
+            </div>
+            <button class="action-btn" onclick="uploadVideo()" id="upload-btn">⬆️ Upload Video</button>
+            <div id="video-message"></div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="showPage('home')">
+            <span style="font-size: 20px;">🏠</span>
+            <span>Home</span>
+        </button>
+        <button class="nav-item" onclick="showPage('explore')">
+            <span style="font-size: 20px;">🧭</span>
+            <span>Explore</span>
+        </button>
+        <button class="nav-item nav-center">
+            <div class="nav-center-btn">🔍</div>
+        </button>
+        <button class="nav-item" onclick="showPage('saved')">
+            <span style="font-size: 20px;">❤️</span>
+            <span>Saved</span>
+        </button>
+        <button class="nav-item" onclick="showPage('profile')">
+            <span style="font-size: 20px;">👤</span>
+            <span>Profile</span>
+        </button>
+    </div>
+
+    <script>
+        // Navigation
+        function showPage(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            if (page === 'home') {
+                document.getElementById('home-page').classList.add('active');
+                document.querySelectorAll('.nav-item')[0].classList.add('active');
+            } else if (page === 'profile') {
+                document.getElementById('profile-page').classList.add('active');
+                document.querySelectorAll('.nav-item')[4].classList.add('active');
+            }
+        }
+
+        // Save Name
+        function saveName() {
+            const name = document.getElementById('name-input').value.trim();
+            const msgDiv = document.getElementById('name-message');
+            
+            if (!name) {
+                msgDiv.innerHTML = '<div class="message error">❌ Please enter your name</div>';
+                return;
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('userName', name);
+            msgDiv.innerHTML = '<div class="message success">✅ Name saved!</div>';
+            document.getElementById('name-input').value = '';
+        }
+
+        // Upload Video
+        function uploadVideo() {
+            const fileInput = document.getElementById('video-input');
+            const msgDiv = document.getElementById('video-message');
+            
+            if (!fileInput.files[0]) {
+                msgDiv.innerHTML = '<div class="message error">❌ Please select a video</div>';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            msgDiv.innerHTML = '<div class="message success">✅ Video selected: ' + file.name + '</div>';
+            
+            // In real app, upload to Supabase here
+            // For now, just show success
+            setTimeout(() => {
+                msgDiv.innerHTML = '<div class="message success">✅ Video uploaded (demo)</div>';
+                fileInput.value = '';
+                document.getElementById('file-label-text').textContent = 'Click to select video (MP4/MOV)';
+            }, 1000);
+        }
+
+        // Update file label
+        document.getElementById('video-input').addEventListener('change', function() {
+            if (this.files[0]) {
+                document.getElementById('file-label-text').textContent = this.files[0].name;
+            }
+        });
     </script>
 </body>
 </html>
