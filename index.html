@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CityDeals EG</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -30,7 +31,6 @@
             display: block;
         }
 
-        /* Header */
         .header {
             margin-bottom: 16px;
         }
@@ -83,7 +83,6 @@
             color: #828282;
         }
 
-        /* Hero */
         .hero-section {
             background: #1e1e1e;
             border-radius: 20px;
@@ -134,7 +133,6 @@
             color: #828282;
         }
 
-        /* Stats */
         .stats-grid {
             margin-bottom: 24px;
         }
@@ -173,7 +171,6 @@
             color: #828282;
         }
 
-        /* Flash Deals */
         .flash-deals-section {
             margin-bottom: 24px;
         }
@@ -286,7 +283,6 @@
             text-decoration: line-through;
         }
 
-        /* Categories */
         .categories-section {
             margin-bottom: 24px;
         }
@@ -327,7 +323,6 @@
             color: #828282;
         }
 
-        /* Profile */
         .profile-header {
             display: flex;
             align-items: center;
@@ -451,7 +446,6 @@
             border: 1px solid rgba(230, 60, 60, 0.2);
         }
 
-        /* Bottom Nav */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -651,7 +645,7 @@
                 <div class="card-icon" style="background: #e63c3c20; color: #e63c3c;">👤</div>
                 <div>
                     <div class="card-title">Your Name</div>
-                    <div class="card-subtitle">Save your profile</div>
+                    <div class="card-subtitle">Save to Supabase</div>
                 </div>
             </div>
             <div class="input-wrapper">
@@ -666,7 +660,7 @@
                 <div class="card-icon" style="background: #2196f320; color: #2196f3;">🎥</div>
                 <div>
                     <div class="card-title">Upload Video</div>
-                    <div class="card-subtitle">Share your moments</div>
+                    <div class="card-subtitle">Save to Supabase Storage</div>
                 </div>
             </div>
             <div class="file-input-wrapper">
@@ -705,6 +699,12 @@
     </div>
 
     <script>
+        // Supabase Config
+        const SUPABASE_URL = 'https://polhqbqtsirdpkgtefni.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_lvq6bKez0fOQP1CYcnqyjA_xCLufW5y';
+        
+        const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         function showPage(page) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -718,7 +718,7 @@
             }
         }
 
-        function saveName() {
+        async function saveName() {
             const name = document.getElementById('name-input').value.trim();
             const msgDiv = document.getElementById('name-message');
             
@@ -727,12 +727,24 @@
                 return;
             }
             
-            localStorage.setItem('userName', name);
-            msgDiv.innerHTML = '<div class="message success">✅ Name saved!</div>';
-            document.getElementById('name-input').value = '';
+            try {
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .insert({ name: name })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                msgDiv.innerHTML = '<div class="message success">✅ Name saved to Supabase!</div>';
+                document.getElementById('name-input').value = '';
+            } catch (err) {
+                console.error('Error:', err);
+                msgDiv.innerHTML = '<div class="message error">❌ ' + err.message + '</div>';
+            }
         }
 
-        function uploadVideo() {
+        async function uploadVideo() {
             const fileInput = document.getElementById('video-input');
             const msgDiv = document.getElementById('video-message');
             
@@ -742,13 +754,39 @@
             }
             
             const file = fileInput.files[0];
-            msgDiv.innerHTML = '<div class="message success">✅ Video selected: ' + file.name + '</div>';
+            msgDiv.innerHTML = '<div class="message success">⬆️ Uploading to Supabase...</div>';
             
-            setTimeout(() => {
-                msgDiv.innerHTML = '<div class="message success">✅ Video uploaded!</div>';
+            try {
+                const fileExt = file.name.split('.').pop();
+                const fileName = Date.now() + '-' + Math.random().toString(36).substring(7) + '.' + fileExt;
+                const filePath = 'uploads/' + fileName;
+
+                const { error: uploadError } = await supabase.storage
+                    .from('user-videos')
+                    .upload(filePath, file);
+
+                if (uploadError) throw uploadError;
+
+                const { data: urlData } = supabase.storage
+                    .from('user-videos')
+                    .getPublicUrl(filePath);
+
+                const { error: dbError } = await supabase
+                    .from('videos')
+                    .insert({
+                        video_url: urlData.publicUrl,
+                        user_name: null
+                    });
+
+                if (dbError) throw dbError;
+
+                msgDiv.innerHTML = '<div class="message success">✅ Video uploaded to Supabase!</div>';
                 fileInput.value = '';
                 document.getElementById('file-label-text').textContent = 'Click to select video (MP4/MOV)';
-            }, 1000);
+            } catch (err) {
+                console.error('Error:', err);
+                msgDiv.innerHTML = '<div class="message error">❌ ' + err.message + '</div>';
+            }
         }
 
         document.getElementById('video-input').addEventListener('change', function() {
