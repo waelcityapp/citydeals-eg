@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CityDeals EG</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -645,7 +644,7 @@
                 <div class="card-icon" style="background: #e63c3c20; color: #e63c3c;">👤</div>
                 <div>
                     <div class="card-title">Your Name</div>
-                    <div class="card-subtitle">Save to Supabase</div>
+                    <div class="card-subtitle">Save locally</div>
                 </div>
             </div>
             <div class="input-wrapper">
@@ -653,6 +652,7 @@
             </div>
             <button class="action-btn" onclick="saveName()">💾 Save Name</button>
             <div id="name-message"></div>
+            <div id="saved-names" style="margin-top: 16px;"></div>
         </div>
 
         <div class="profile-card">
@@ -660,7 +660,7 @@
                 <div class="card-icon" style="background: #2196f320; color: #2196f3;">🎥</div>
                 <div>
                     <div class="card-title">Upload Video</div>
-                    <div class="card-subtitle">Save to Supabase Storage</div>
+                    <div class="card-subtitle">Save locally</div>
                 </div>
             </div>
             <div class="file-input-wrapper">
@@ -672,6 +672,7 @@
             </div>
             <button class="action-btn" onclick="uploadVideo()">⬆️ Upload Video</button>
             <div id="video-message"></div>
+            <div id="saved-videos" style="margin-top: 16px;"></div>
         </div>
     </div>
 
@@ -699,26 +700,7 @@
     </div>
 
     <script>
-        // استني Supabase يتحمل
-        let supabase = null;
-        
-        function initSupabase() {
-            if (typeof supabaseJs === 'undefined') {
-                setTimeout(initSupabase, 100);
-                return;
-            }
-            
-            supabase = supabaseJs.createClient(
-                'https://polhqbqtsirdpkgtefni.supabase.co',
-                'sb_publishable_lvq6bKez0fOQP1CYcnqyjA_xCLufW5y'
-            );
-            
-            console.log('Supabase initialized!');
-        }
-        
-        // ابدأي الانتظار
-        initSupabase();
-
+        // Navigation
         function showPage(page) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -729,10 +711,12 @@
             } else if (page === 'profile') {
                 document.getElementById('profile-page').classList.add('active');
                 document.querySelectorAll('.nav-item')[4].classList.add('active');
+                loadSavedData();
             }
         }
 
-        async function saveName() {
+        // Save Name to localStorage
+        function saveName() {
             const name = document.getElementById('name-input').value.trim();
             const msgDiv = document.getElementById('name-message');
             
@@ -741,29 +725,18 @@
                 return;
             }
             
-            if (!supabase) {
-                msgDiv.innerHTML = '<div class="message error">❌ Supabase not loaded yet. Wait 2 seconds and try again.</div>';
-                return;
-            }
+            // Get existing names
+            let names = JSON.parse(localStorage.getItem('names') || '[]');
+            names.push({ name: name, date: new Date().toLocaleString() });
+            localStorage.setItem('names', JSON.stringify(names));
             
-            try {
-                const { data, error } = await supabase
-                    .from('profiles')
-                    .insert({ name: name })
-                    .select()
-                    .single();
-
-                if (error) throw error;
-
-                msgDiv.innerHTML = '<div class="message success">✅ Name saved to Supabase!</div>';
-                document.getElementById('name-input').value = '';
-            } catch (err) {
-                console.error('Error:', err);
-                msgDiv.innerHTML = '<div class="message error">❌ ' + err.message + '</div>';
-            }
+            msgDiv.innerHTML = '<div class="message success">✅ Name saved locally!</div>';
+            document.getElementById('name-input').value = '';
+            loadSavedData();
         }
 
-        async function uploadVideo() {
+        // Upload Video to localStorage
+        function uploadVideo() {
             const fileInput = document.getElementById('video-input');
             const msgDiv = document.getElementById('video-message');
             
@@ -772,52 +745,57 @@
                 return;
             }
             
-            if (!supabase) {
-                msgDiv.innerHTML = '<div class="message error">❌ Supabase not loaded yet. Wait 2 seconds and try again.</div>';
-                return;
-            }
-            
             const file = fileInput.files[0];
-            msgDiv.innerHTML = '<div class="message success">⬆️ Uploading to Supabase...</div>';
             
-            try {
-                const fileExt = file.name.split('.').pop();
-                const fileName = Date.now() + '-' + Math.random().toString(36).substring(7) + '.' + fileExt;
-                const filePath = 'uploads/' + fileName;
+            // Save video info
+            let videos = JSON.parse(localStorage.getItem('videos') || '[]');
+            videos.push({ 
+                name: file.name, 
+                size: (file.size / 1024 / 1024).toFixed(2) + ' MB',
+                date: new Date().toLocaleString()
+            });
+            localStorage.setItem('videos', JSON.stringify(videos));
+            
+            msgDiv.innerHTML = '<div class="message success">✅ Video saved locally!</div>';
+            fileInput.value = '';
+            document.getElementById('file-label-text').textContent = 'Click to select video (MP4/MOV)';
+            loadSavedData();
+        }
 
-                const { error: uploadError } = await supabase.storage
-                    .from('user-videos')
-                    .upload(filePath, file);
+        // Load saved data
+        function loadSavedData() {
+            // Load names
+            const names = JSON.parse(localStorage.getItem('names') || '[]');
+            const namesDiv = document.getElementById('saved-names');
+            if (names.length > 0) {
+                namesDiv.innerHTML = '<h3 style="color: #828282; font-size: 13px; margin-bottom: 8px;">Saved Names:</h3>' +
+                    names.map(n => `<div style="background: #0a0a0a; padding: 10px; border-radius: 8px; margin-bottom: 8px; font-size: 13px;">
+                        <strong>${n.name}</strong><br>
+                        <span style="color: #828282; font-size: 11px;">${n.date}</span>
+                    </div>`).join('');
+            }
 
-                if (uploadError) throw uploadError;
-
-                const { data: urlData } = supabase.storage
-                    .from('user-videos')
-                    .getPublicUrl(filePath);
-
-                const { error: dbError } = await supabase
-                    .from('videos')
-                    .insert({
-                        video_url: urlData.publicUrl,
-                        user_name: null
-                    });
-
-                if (dbError) throw dbError;
-
-                msgDiv.innerHTML = '<div class="message success">✅ Video uploaded to Supabase!</div>';
-                fileInput.value = '';
-                document.getElementById('file-label-text').textContent = 'Click to select video (MP4/MOV)';
-            } catch (err) {
-                console.error('Error:', err);
-                msgDiv.innerHTML = '<div class="message error">❌ ' + err.message + '</div>';
+            // Load videos
+            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
+            const videosDiv = document.getElementById('saved-videos');
+            if (videos.length > 0) {
+                videosDiv.innerHTML = '<h3 style="color: #828282; font-size: 13px; margin-bottom: 8px;">Saved Videos:</h3>' +
+                    videos.map(v => `<div style="background: #0a0a0a; padding: 10px; border-radius: 8px; margin-bottom: 8px; font-size: 13px;">
+                        <strong>🎥 ${v.name}</strong><br>
+                        <span style="color: #828282; font-size: 11px;">${v.size} • ${v.date}</span>
+                    </div>`).join('');
             }
         }
 
+        // File input change
         document.getElementById('video-input').addEventListener('change', function() {
             if (this.files[0]) {
                 document.getElementById('file-label-text').textContent = this.files[0].name;
             }
         });
+
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', loadSavedData);
     </script>
 
 </body>
