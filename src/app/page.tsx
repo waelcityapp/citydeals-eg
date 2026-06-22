@@ -14,14 +14,14 @@ export default function Home() {
     return (
       <div className="flex flex-col pb-32 max-w-[430px] mx-auto bg-black text-white" dir="rtl" style={{ fontFamily: 'sans-serif' }}>
         
-        {/* 1. هيدر ريبليت الفخم بصورة الخلفية ليلية */}
-        <div className="relative h-[240px] w-full bg-cover bg-center" style={{ backgroundImage: `url('https://unsplash.com')` }}>
+        {/* 1. هيدر ريبليت الفخم بصورة الخلفية ليلية مستقرة */}
+        <div className="relative h-[240px] w-full bg-cover bg-center" style={{ backgroundColor: '#111111' }}>
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/60 p-5 flex flex-col justify-between">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center shadow-lg">
                 <span className="text-white text-sm font-bold">C</span>
               </div>
-              <span className="text-white font-bold text-lg drop-shadow">City Deals</span>
+              <span className="text-white font-bold text-lg">City Deals</span>
             </div>
             <div className="text-right">
               <h1 className="text-2xl font-bold text-white mb-0.5">عروض القاهرة</h1>
@@ -30,7 +30,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* 2. مربعات العدادات الإحصائية الثلاثية */}
+        {/* 2. مربعات العدادات الإحصائية الثلاثية لريبليت */}
         <div className="px-4 -mt-5 grid grid-cols-3 gap-3 z-10">
           <div className="bg-[#121212] border border-white/5 rounded-2xl p-3 text-center shadow-xl">
             <p className="text-xl font-bold text-gray-500">-</p>
@@ -48,7 +48,7 @@ export default function Home() {
 
         {/* 3. قائمة اختيار الفئة المنسدلة الذكية */}
         <div className="px-4 mt-5">
-          <button className="w-full flex items-center justify-between bg-white/5 border border-white/10 rounded-2xl px-4 py-3.5 text-right transition-all active:bg-white/10">
+          <button className="w-full flex items-center justify-between bg-white/5 border border-white/10 rounded-2xl px-4 py-3.5 text-right">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-xl bg-white/5">
                 <span>📂</span>
@@ -72,18 +72,16 @@ export default function Home() {
             <span className="text-xs text-gray-400 hover:text-white transition-colors cursor-pointer">شاهد الكل ←</span>
           </div>
 
-          {/* قائمة بطاقات العروض الفاخرة */}
           <div className="grid grid-cols-1 gap-4">
             <div className="bg-[#111] border border-white/5 rounded-2xl overflow-hidden shadow-2xl relative">
               <div className="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 z-10 shadow-lg">
                 <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
                 FLASH DEAL
               </div>
-              <button className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center text-red-500 transition-colors">
+              <button className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center text-red-500">
                 ❤
               </button>
               <div className="relative h-48 w-full bg-gradient-to-br from-[#1e1e1e] to-[#121212] overflow-hidden">
-                <img src="https://picsum.photos" alt="Koshary" className="w-full h-full object-cover opacity-60" />
                 <div className="absolute bottom-3 left-3 bg-black/70 backdrop-blur-md text-white font-black text-xs px-3 py-1 rounded-lg">
                   50% OFF
                 </div>
