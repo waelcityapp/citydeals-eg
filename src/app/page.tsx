@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -14,7 +14,7 @@ export default function Home() {
     return (
       <div className="flex flex-col pb-32 max-w-[430px] mx-auto bg-black text-white" dir="rtl" style={{ fontFamily: 'sans-serif' }}>
         
-        {/* 1. هيدر ريبليت الفخم بصورة الخلفية ليلية مستقرة */}
+        {/* 1. هيدر ريبليت الفخم بصورة الخلفية ليلية */}
         <div className="relative h-[240px] w-full bg-cover bg-center" style={{ backgroundColor: '#111111' }}>
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/60 p-5 flex flex-col justify-between">
             <div className="flex items-center gap-2">
@@ -30,7 +30,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* 2. مربعات العدادات الإحصائية الثلاثية لريبليت */}
+        {/* 2. مربعات العدادات الإحصائية الثلاثية */}
         <div className="px-4 -mt-5 grid grid-cols-3 gap-3 z-10">
           <div className="bg-[#121212] border border-white/5 rounded-2xl p-3 text-center shadow-xl">
             <p className="text-xl font-bold text-gray-500">-</p>
